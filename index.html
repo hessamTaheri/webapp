@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>اپلیکیشن شبیه‌ساز و تست کوررنگی</title>
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="https://example.com/icon.png" sizes="192x192">
+  <link rel="apple-touch-icon" href="https://example.com/icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="theme-color" content="#007bff">
+  <style>
+    @font-face {
+      font-family: 'Vazir';
+      src: url('https://cdn.fontcdn.ir/Font/Persian/Vazir/Vazir.woff2') format('woff2');
+      font-weight: normal;
+    }
+    body {
+      font-family: 'Vazir', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
+      color: #333333;
+      overflow: hidden;
+    }
+    header, footer, aside, .site-header, .site-footer, .sidebar {
+      display: none !important;
+    }
+    :root {
+      --bg-color: #ffffff;
+      --text-color: #333333;
+      --shadow-color: rgba(0, 0, 0, 0.15);
+      --primary-color: #007bff;
+      --primary-hover: #0056b3;
+      --accent-color: #f8f9fa;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-color: #1a1a1a;
+        --text-color: #ffffff;
+        --shadow-color: rgba(255, 255, 255, 0.15);
+        --accent-color: #2c2c2c;
+      }
+      body {
+        background: linear-gradient(135deg, #2c2c2c, #1a1a1a);
+      }
+    }
+    #app-home {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 20px;
+      padding: 20px;
+      height: 100vh;
+      overflow-y: auto;
+    }
+    .app-icon {
+      text-align: center;
+      background: var(--bg-color);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 6px 12px var(--shadow-color);
+      cursor: pointer;
+      transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+    }
+    .app-icon:hover {
+      transform: translateY(-5px);
+      background: var(--primary-color);
+      color: #fff;
+      box-shadow: 0 8px 16px var(--shadow-color);
+    }
+    .app-icon i {
+      font-size: 48px;
+      margin-bottom: 12px;
+      color: var(--primary-color);
+    }
+    .app-icon:hover i {
+      color: #fff;
+    }
+    .app-icon span {
+      display: block;
+      font-size: 16px;
+      font-weight: 500;
+    }
+    .tool-page {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background: var(--bg-color);
+      padding: 20px;
+      z-index: 10;
+    }
+    .tool-page.active {
+      display: block;
+    }
+    .back-btn, button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 20px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+      box-shadow: 0 4px 8px var(--shadow-color);
+    }
+    .back-btn:hover, button:hover {
+      background: var(--primary-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px var(--shadow-color);
+    }
+    .container {
+      background: var(--bg-color);
+      border-radius: 16px;
+      box-shadow: 0 10px 20px var(--shadow-color);
+      padding: 24px;
+      max-width: 600px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    h1, h2 {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: var(--text-color);
+    }
+    .modes {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin: 20px 0;
+    }
+    .modes label {
+      font-size: 14px;
+      cursor: pointer;
+      padding: 8px 16px;
+      background: var(--accent-color);
+      border-radius: 8px;
+      transition: background 0.3s ease, color 0.3s ease;
+      box-shadow: 0 2px 4px var(--shadow-color);
+    }
+    .modes input[type="radio"] {
+      display: none;
+    }
+    .modes input[type="radio"]:checked + span {
+      background: var(--primary-color);
+      color: #fff;
+      box-shadow: 0 4px 8px var(--shadow-color);
+    }
+    input[type="range"] {
+      width: 100%;
+      max-width: 200px;
+      accent-color: var(--primary-color);
+      height: 8px;
+      border-radius: 4px;
+      background: var(--accent-color);
+      cursor: pointer;
+    }
+    canvas {
+      border: 2px solid var(--accent-color);
+      width: 100%;
+      height: auto;
+      border-radius: 12px;
+      max-width: 100%;
+    }
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    input[type="text"] {
+      flex: 1;
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid var(--accent-color);
+      border-radius: 8px;
+      min-width: 200px;
+      background: var(--bg-color);
+      color: var(--text-color);
+    }
+    input[type="text"]::placeholder {
+      color: #777;
+    }
+    iframe {
+      width: 100%;
+      height: 60vh;
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px var(--shadow-color);
+    }
+    .error-message, .warning-message, .hint-text {
+      font-size: 14px;
+      color: #777;
+      margin: 12px 0;
+    }
+    #tool-camera-simulator .camera-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    @media (orientation: landscape) {
+      #tool-camera-simulator .camera-container {
+        flex-direction: row;
+      }
+      #tool-camera-simulator .camera-container canvas, #tool-camera-simulator .camera-container video {
+        width: 50%;
+      }
+    }
+    #orientation-note {
+      font-size: 14px;
+      color: #777;
+      margin-top: 12px;
+      background: var(--accent-color);
+      padding: 8px;
+      border-radius: 8px;
+    }
+    #tool-color-picker .video-container {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 8px var(--shadow-color);
+    }
+    #tool-color-picker #canvas-color.fixed {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    #tool-color-picker .magnifier-canvas {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      border: 3px solid var(--bg-color);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--shadow-color);
+      z-index: 10;
+    }
+    #tool-picture-simulator .drop-area {
+      border: 2px dashed var(--accent-color);
+      padding: 20px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: border-color 0.3s ease, background 0.3s ease;
+      background: var(--accent-color);
+    }
+    #tool-picture-simulator .drop-area:hover, .drop-area.active {
+      border-color: var(--primary-color);
+      background: var(--bg-color);
+    }
+    #tool-picture-simulator .sample-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+      gap: 12px;
+      justify-items: center;
+      margin-bottom: 20px;
+    }
+    #tool-picture-simulator .sample-img {
+      width: 80px;
+      height: auto;
+      cursor: pointer;
+      border: 2px solid transparent;
+      border-radius: 8px;
+      transition: transform 0.3s ease, border 0.3s ease, box-shadow 0.3s ease;
+    }
+    #tool-picture-simulator .sample-img:hover, .sample-img:focus {
+      border: 2px solid var(--primary-color);
+      transform: scale(1.1);
+      box-shadow: 0 4px 8px var(--shadow-color);
+    }
+    .quizContainer {
+      background: var(--bg-color);
+      padding: 24px;
+      border-radius: 16px;
+      box-shadow: 0 10px 20px var(--shadow-color);
+    }
+    .quizContainer .bar {
+      background: var(--accent-color);
+      border-radius: 20px;
+      height: 10px;
+      margin: 12px 0;
+    }
+    .quizContainer #childbar-ishihara, .quizContainer #childbar-hrr {
+      background: var(--primary-color);
+      height: 100%;
+      border-radius: 20px;
+      transition: width 0.3s ease;
+    }
+    .quizContainer ul li {
+      list-style: none;
+      margin: 12px 0;
+    }
+    .quizContainer label {
+      cursor: pointer;
+      padding: 8px 16px;
+      background: var(--accent-color);
+      border-radius: 8px;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+    .quizContainer input[type="radio"]:checked + label {
+      background: var(--primary-color);
+      color: #fff;
+    }
+    #optionContainer-ishihara, #optionContainer-hrr {
+      display: none;
+    }
+    #quiz-ishihara, #quiz-hrr {
+      display: block;
+    }
+    #add-to-home {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      padding: 12px 24px;
+      background: var(--primary-color);
+      color: #fff;
+      border-radius: 20px;
+      cursor: pointer;
+      box-shadow: 0 4px 8px var(--shadow-color);
+    }
+    #install-instructions {
+      display: none;
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--bg-color);
+      padding: 12px 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px var(--shadow-color);
+      text-align: center;
+      max-width: 300px;
+      color: var(--text-color);
+      font-size: 14px;
+    }
+    #tool-website-simulator .filter-protanopia { filter: url(#protanopia); }
+    #tool-website-simulator .filter-deuteranopia { filter: url(#deuteranopia); }
+    #tool-website-simulator .filter-tritanopia { filter: url(#tritanopia); }
+    #tool-website-simulator .filter-achromatopsia { filter: url(#achromatopsia); }
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div id="app-home">
+    <div class="app-icon" onclick="openTool('camera-simulator')">
+      <i class="fas fa-camera"></i>
+      <span>شبیه‌ساز با دوربین</span>
+    </div>
+    <div class="app-icon" onclick="openTool('picture-simulator')">
+      <i class="fas fa-image"></i>
+      <span>شبیه‌ساز تصاویر</span>
+    </div>
+    <div class="app-icon" onclick="openTool('website-simulator')">
+      <i class="fas fa-globe"></i>
+      <span>شبیه‌ساز وبسایت</span>
+    </div>
+    <div class="app-icon" onclick="openTool('color-picker')">
+      <i class="fas fa-eye-dropper"></i>
+      <span>تشخیص رنگ</span>
+    </div>
+    <div class="app-icon" onclick="openTool('ishihara-test')">
+      <i class="fas fa-eye"></i>
+      <span>تست ایشی هارا</span>
+    </div>
+    <div class="app-icon" onclick="openTool('hrr-test')">
+      <i class="fas fa-shapes"></i>
+      <span>تست HRR</span>
+    </div>
+  </div>
+
+  <div id="tool-camera-simulator" class="tool-page">
+    <button class="back-btn" onclick="closeTool()">برگشت</button>
+    <h2>شبیه‌ساز کوررنگی</h2>
+    <div class="camera-container">
+      <video id="video-camera-real" autoplay playsinline style="display: none;"></video>
+      <canvas id="canvas-camera-real"></canvas>
+      <video id="video-camera" autoplay playsinline style="display: none;"></video>
+      <canvas id="canvas-camera"></canvas>
+    </div>
+    <p id="orientation-note">اگر گوشی را به حالت افقی بچرخانید، تصویر واقعی (چپ) و شبیه‌سازی‌شده (راست) کنار هم نمایش داده می‌شوند. در حالت عمودی فقط تصویر شبیه‌سازی‌شده نشان داده می‌شود.</p>
+    <div id="controls-camera" class="controls">
+      <div class="modes">
+        <label><input type="radio" name="mode-camera" value="none" checked><span>عادی</span></label>
+        <label><input type="radio" name="mode-camera" value="protan"><span>کوررنگی قرمز</span></label>
+        <label><input type="radio" name="mode-camera" value="deutan"><span>کوررنگی سبز</span></label>
+        <label><input type="radio" name="mode-camera" value="tritan"><span>کوررنگی آبی</span></label>
+        <label><input type="radio" name="mode-camera" value="achroma"><span>کوررنگی کامل</span></label>
+      </div>
+      <label for="intensity-camera">شدت:</label>
+      <input type="range" id="intensity-camera" min="0" max="1" step="0.01" value="1">
+      <button id="switchCamera-camera" title="تعویض دوربین">
+        <i class="fas fa-camera-rotate"></i>
+      </button>
+      <button id="startCamera-camera" title="شروع دوربین">
+        <i class="fas fa-video"></i>
+      </button>
+    </div>
+  </div>
+
+  <div id="tool-picture-simulator" class="tool-page">
+    <button class="back-btn" onclick="closeTool()">برگشت</button>
+    <div class="container">
+      <h1>شبیه‌ساز کوررنگی</h1>
+      <div class="sample-images">
+        <div id="dropArea-picture" class="drop-area">
+          تصویر را اینجا بکشید یا کلیک کنید
+          <input type="file" id="imageLoader-picture" accept="image/*" aria-label="انتخاب تصویر برای شبیه‌سازی کوررنگی" style="display: none;" />
+        </div>
+        <p>یا یکی از تصاویر زیر را انتخاب کنید:</p>
+        <div class="sample-list">
+          <img class="sample-img" src="https://www.koorrangi.ir/wp-content/uploads/2023/07/9-45-n-n.jpg" alt="نمونه 1" data-src="https://www.koorrangi.ir/wp-content/uploads/2023/07/9-45-n-n.jpg" tabindex="0">
+          <img class="sample-img" src="https://www.koorrangi.ir/wp-content/uploads/2023/07/17-42-protanS2M42-deutanS4M42.jpg" alt="نمونه 2" data-src="https://www.koorrangi.ir/wp-content/uploads/2023/07/17-42-protanS2M42-deutanS4M42.jpg" tabindex="0">
+          <img class="sample-img" src="https://www.koorrangi.ir/wp-content/uploads/2025/07/001191fc-4fdb-4f0e-8bb8-4a079a7e8f6a.jpg" alt="نمونه 3" data-src="https://www.koorrangi.ir/wp-content/uploads/2025/07/001191fc-4fdb-4f0e-8bb8-4a079a7e8f6a.jpg" tabindex="0">
+          <img class="sample-img" src="https://www.koorrangi.ir/wp-content/uploads/2025/07/0775ad42-b2fb-4bb3-9a42-b59f00e01356.jpg" alt="نمونه 4" data-src="https://www.koorrangi.ir/wp-content/uploads/2025/07/0775ad42-b2fb-4bb3-9a42-b59f00e01356.jpg" tabindex="0">
+          <img class="sample-img" src="https://www.koorrangi.ir/wp-content/uploads/2025/07/72e00a5b-644b-4960-9e5c-7d90a71a9919.jpg" alt="نمونه 5" data-src="https://www.koorrangi.ir/wp-content/uploads/2025/07/72e00a5b-644b-4960-9e5c-7d90a71a9919.jpg" tabindex="0">
+        </div>
+      </div>
+      <div class="modes">
+        <label><input type="radio" name="mode-picture" value="normal" checked><span>دید نرمال</span></label>
+        <label><input type="radio" name="mode-picture" value="protanopia"><span>کوررنگی قرمز</span></label>
+        <label><input type="radio" name="mode-picture" value="deuteranopia"><span>کوررنگی سبز</span></label>
+        <label><input type="radio" name="mode-picture" value="tritanopia"><span>کوررنگی آبی</span></label>
+        <label><input type="radio" name="mode-picture" value="achromatopsia"><span>کوررنگی کامل</span></label>
+      </div>
+      <div class="intensity-control">
+        <label for="intensity-picture">شدت شبیه‌سازی: <span id="intensityValue-picture">100%</span></label>
+        <input type="range" id="intensity-picture" min="0" max="1" step="0.1" value="1" aria-label="تنظیم شدت شبیه‌سازی کوررنگی">
+      </div>
+      <p class="hint-text">برای دیدن تصویر اصلی، انگشت خود را روی تصویر نگه دارید (یا با موس کلیک کنید)</p>
+      <canvas id="mainCanvas-picture"></canvas>
+      <button id="downloadBtn-picture" aria-label="دانلود تصویر شبیه‌سازی شده">دانلود تصویر <i class="fas fa-download"></i></button>
+      <p class="hint-text">دانلود در موبایل فقط برای تصاویر کمتر از ۲ مگابایت</p>
+      <div id="loading-picture" style="display: none;">در حال بارگذاری...</div>
+    </div>
+  </div>
+
+  <div id="tool-website-simulator" class="tool-page">
+    <button class="back-btn" onclick="closeTool()">برگشت</button>
+    <div class="container">
+      <div class="controls">
+        <input type="text" id="urlInput-website" placeholder="آدرس صفحه را وارد کنید (مثال: google.com)">
+        <button id="loadBtn-website">بارگذاری</button>
+      </div>
+      <div class="modes">
+        <label><input type="radio" name="mode-website" value="" checked><span>عادی</span></label>
+        <label><input type="radio" name="mode-website" value="protanopia"><span>کوررنگی قرمز</span></label>
+        <label><input type="radio" name="mode-website" value="deuteranopia"><span>کوررنگی سبز</span></label>
+        <label><input type="radio" name="mode-website" value="tritanopia"><span>کوررنگی آبی</span></label>
+        <label><input type="radio" name="mode-website" value="achromatopsia"><span>کوررنگی کامل</span></label>
+      </div>
+      <div id="iframeContainer-website">
+        <iframe id="simFrame-website" src=""></iframe>
+      </div>
+      <div id="loading-website" style="display: none;">در حال بارگذاری...</div>
+      <div class="warning-message" style="display: none;">
+        اگر سایت باز نشد، لطفاً از سایت اسکرین‌شات بگیرید و در <a href="https://www.koorrangi.ir/%d8%b4%d8%a8%d9%8a%d9%87-%d8%b3%d8%a7%d8%b2-%da%a9%d9%88%d8%b1%d8%b1%d9%86%da%af%d9%8a/" target="_blank">صفحه شبیه‌ساز کوررنگی</a> استفاده کنید.
+      </div>
+      <svg width="0" height="0">
+        <filter id="protanopia">
+          <feColorMatrix type="matrix" values="0.567 0.433 0 0 0 0.558 0.442 0 0 0 0 0 1 0 0 0 0 0 1 0"/>
+        </filter>
+        <filter id="deuteranopia">
+          <feColorMatrix type="matrix" values="0.625 0.375 0 0 0 0.7 0.3 0 0 0 0 0 1 0 0 0 0 0 1 0"/>
+        </filter>
+        <filter id="tritanopia">
+          <feColorMatrix type="matrix" values="0.95 0.05 0 0 0 0 0.433 0.567 0 0 0 0.475 0.525 0 0 0 0 0 1 0"/>
+        </filter>
+        <filter id="achromatopsia">
+          <feColorMatrix type="matrix" values="0.299 0.587 0.114 0 0 0.299 0.587 0.114 0 0 0.299 0.587 0.114 0 0 0 0 0 1 0"/>
+        </filter>
+      </svg>
+    </div>
+  </div>
+
+  <div id="tool-color-picker" class="tool-page">
+    <button class="back-btn" onclick="closeTool()">برگشت</button>
+    <div class="container">
+      <h2>تشخیص رنگ با دوربین</h2>
+      <div id="videoContainer-color" class="video-container">
+        <video id="video-color" autoplay playsinline class="absolute inset-0 w-full h-full object-cover"></video>
+        <canvas id="canvas-color"></canvas>
+        <canvas id="magnifierCanvas-color" class="magnifier-canvas"></canvas>
+        <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <div class="w-6 h-6 border-2 border-white rounded-full"></div>
+        </div>
+      </div>
+      <div id="controls-color" class="controls">
+        <button id="zoomOutBtn-color"><i class="fas fa-search-minus"></i></button>
+        <button id="zoomInBtn-color"><i class="fas fa-search-plus"></i></button>
+        <button id="switchCameraBtn-color"><i class="fas fa-camera-rotate"></i></button>
+        <button id="pauseResumeBtn-color"><i id="pauseResumeIcon-color" class="fas fa-pause"></i></button>
+        <button id="playColorBtn-color"><i class="fas fa-volume-up"></i></button>
+      </div>
+      <div id="colorInfo-color" class="text-center p-6 bg-gray-50 rounded-lg shadow-inner">
+        <p class="text-gray-700 text-lg mb-2"><span class="font-bold">رنگ: </span><span id="colorName-color" class="text-indigo-600">در انتظار...</span></p>
+        <p class="text-gray-700 text-lg mb-2"><span class="font-bold">کد هگز: </span><span id="hexCode-color" class="font-mono text-indigo-600">-</span></p>
+        <p class="text-gray-700 text-lg mb-4"><span class="font-bold">کد RGB: </span><span id="rgbCode-color" class="font-mono text-indigo-600">-</span></p>
+        <div id="colorBox-color" class="w-16 h-16 mx-auto border border-gray-400 rounded-full shadow-inner"></div>
+      </div>
+      <div id="messageModal-color" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-lg shadow-xl p-6 max-w-sm w-full text-center">
+          <p id="modalMessage-color" class="text-gray-800 text-lg mb-4"></p>
+          <button id="closeModalBtn-color" class="bg-red-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-red-600 transition-colors">بستن</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="tool-ishihara-test" class="tool-page">
+    <button class="back-btn" onclick="closeTool()">برگشت</button>
+    <div class="quizContainer" id="quiz-ishihara">
+      <h1>تست کوررنگی ایشی هارا</h1>
+      <img id="mamad-ishihara" class="mamad" width="400" height="400" onload="nowShowPicIshihara()"></img>
+      <h1 id="progressbarnumber-ishihara"></h1>
+      <div class="bar">
+        <div id="childbar-ishihara"></div>
+      </div>
+      <h3>سوال‌ها</h3>
+      <ul id="nowShowPic-ishihara" style="display:none;">
+        <li><input type="radio" id="a-ishihara" name="answer-ishihara" class="answer" /><label id="option1-ishihara" for="a-ishihara"></label></li>
+        <li><input type="radio" id="b-ishihara" name="answer-ishihara" class="answer" /><label id="option2-ishihara" for="b-ishihara"></label></li>
+        <li><input type="radio" id="c-ishihara" name="answer-ishihara" class="answer" /><label id="option3-ishihara" for="c-ishihara"></label></li>
+        <li><input type="radio" id="d-ishihara" name="answer-ishihara" class="answer" /><label id="option4-ishihara" for="d-ishihara">هیچکدام</label></li>
+      </ul>
+      <div class="btn">
+        <button id="btn-reset-ishihara" style="display: none">تست مجدد</button>
+        <button id="btn-next-ishihara" style="display: none">بعدی</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="tool-hrr-test" class="tool-page">
+    <button class="back-btn" onclick="closeTool()">برگشت</button>
+    <div class="quizContainer" id="quiz-hrr">
+      <h1>تست کوررنگی HRR</h1>
+      <img id="mamad-hrr" class="mamad" width="400" height="400" onload="nowShowPicHrr()"></img>
+      <h1 id="progressbarnumber-hrr"></h1>
+      <div class="bar">
+        <div id="childbar-hrr"></div>
+      </div>
+      <h3>سوال‌ها</h3>
+      <ul id="nowShowPic-hrr" style="display:none;">
+        <li><input type="radio" id="a-hrr" name="answer-hrr" class="answer" /><label id="option1-hrr" for="a-hrr"></label></li>
+        <li><input type="radio" id="b-hrr" name="answer-hrr" class="answer" /><label id="option2-hrr" for="b-hrr"></label></li>
+        <li><input type="radio" id="c-hrr" name="answer-hrr" class="answer" /><label id="option3-hrr" for="c-hrr"></label></li>
+        <li><input type="radio" id="d-hrr" name="answer-hrr" class="answer" /><label id="option4-hrr" for="d-hrr">هیچکدام</label></li>
+      </ul>
+      <div class="btn">
+        <button id="btn-reset-hrr" style="display: none">تست مجدد</button>
+        <button id="btn-next-hrr" style="display: none">بعدی</button>
+      </div>
+    </div>
+  </div>
+
+  <button id="add-to-home" style="display: none;">اضافه به صفحه اصلی</button>
+  <div id="install-instructions" style="display: none;">
+    برای اضافه کردن به صفحه اصلی: در مرورگر، منوی Share را باز کنید و "Add to Home Screen" را انتخاب کنید.
+    <br>
+    <button id="dismiss-a2hs">بعداً نشان بده</button>
+  </div>
+
+  <script src="js/main.js"></script>
+  <script src="js/camera-simulator.js"></script>
+  <script src="js/picture-simulator.js"></script>
+  <script src="js/website-simulator.js"></script>
+  <script src="js/color-picker.js"></script>
+  <script src="js/ishihara-test.js"></script>
+  <script src="js/hrr-test.js"></script>
+</body>
+</html>
