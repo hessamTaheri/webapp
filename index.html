@@ -615,6 +615,15 @@
   <div id="tool-color-picker" class="tool-page">
     <button class="back-btn" onclick="closeTool()">برگشت</button>
     <div class="container">
+      <!-- Camera Permission Modal -->
+<div id="cameraPermissionModal" class="fixed inset-0 bg-gray-900 bg-opacity-70 flex items-center justify-center z-50">
+  <div class="bg-white rounded-lg shadow-xl p-6 max-w-sm w-full text-center">
+    <p class="text-gray-800 text-lg mb-4">برای استفاده از این ابزار، باید اجازه دسترسی به دوربین بدهید.</p>
+    <button id="allowCameraBtn" class="bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors">
+      اجازه دسترسی
+    </button>
+  </div>
+</div>
       <h2>تشخیص رنگ با دوربین</h2>
       <div id="videoContainer-color" class="video-container">
         <video id="video-color" autoplay playsinline class="absolute inset-0 w-full h-full object-cover"></video>

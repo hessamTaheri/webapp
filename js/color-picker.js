@@ -209,8 +209,8 @@ magnifierCanvas.style.transform = "translate(-50%, -50%) scale(1)";
         console.log('متادیتای ویدیو لود شد:', video.videoWidth, video.videoHeight);
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
-        const aspectRatio = video.videoHeight / video.videoWidth;
-        videoContainer.style.paddingTop = `${aspectRatio * 100}%`;
+        // const aspectRatio = video.videoHeight / video.videoWidth;
+        // videoContainer.style.paddingTop = `${aspectRatio * 100}%`;
         video.style.filter = `brightness(${brightnessSlider.value}) contrast(1)`;
         console.log('روشنایی اولیه تنظیم شد:', brightnessSlider.value);
         requestAnimationFrame(draw);
@@ -307,19 +307,16 @@ magnifierCanvas.style.transform = "translate(-50%, -50%) scale(1)";
   if (!isPaused && video.readyState === video.HAVE_ENOUGH_DATA) {
     // کشیدن تصویر روی canvas اصلی
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-    const centerX = Math.floor(canvas.width / 2);
-    const centerY = Math.floor(canvas.height / 2);
 
-    // 👇 موقعیت واقعی ویدیو روی صفحه
-    const videoRect = video.getBoundingClientRect();
-    const centerScreenX = videoRect.left + videoRect.width / 2;
-    const centerScreenY = videoRect.top + videoRect.height / 2;
+const centerX = Math.floor(canvas.width / 2);
+const centerY = Math.floor(canvas.height / 2);
 
-    // 👇 قرار دادن ذره‌بین دقیقا وسط تصویر ویدیو
-    magnifierCanvas.style.position = "fixed";
-    magnifierCanvas.style.top = `${centerScreenY}px`;
-    magnifierCanvas.style.left = `${centerScreenX}px`;
-    magnifierCanvas.style.transform = `translate(-50%, -50%) scale(${zoomLevel})`;
+
+    // ⬅️ دیگه نیازی به videoRect و fixed نیست
+    // magnifierCanvas.style.position = "absolute";
+    // magnifierCanvas.style.top = `${centerY}px`;
+    // magnifierCanvas.style.left = `${centerX}px`;
+    // magnifierCanvas.style.transform = `translate(-50%, -50%) scale(${zoomLevel})`;
 
     // محاسبه اندازه ناحیه ذره‌بین
     const magnifierZoom = BASE_MAGNIFIER_ZOOM * zoomLevel;
@@ -393,6 +390,7 @@ magnifierCanvas.style.transform = "translate(-50%, -50%) scale(1)";
   requestAnimationFrame(draw);
 }
 
+
   // Event Listenerها
   switchCameraBtn.addEventListener('click', () => {
     useFrontCamera = !useFrontCamera;
@@ -452,17 +450,21 @@ magnifierCanvas.style.transform = "translate(-50%, -50%) scale(1)";
     messageModal.classList.add('hidden');
     console.log('مودال بسته شد');
   });
+const cameraPermissionModal = document.getElementById('cameraPermissionModal');
+const allowCameraBtn = document.getElementById('allowCameraBtn');
 
-  // بررسی پشتیبانی از getUserMedia
+allowCameraBtn.addEventListener('click', () => {
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
     showMessage('مرورگر شما از دسترسی به دوربین پشتیبانی نمی‌کند.');
     console.error('getUserMedia پشتیبانی نمی‌شود');
     return;
   }
 
-  // شروع جریان دوربین
-  getCameraStream();
-}
+    getCameraStream();       // شروع دوربین
+    cameraPermissionModal.classList.add('hidden'); // بستن مودال بعد از اجازه
+  });
+
+} // 👈 اینجا تابع initColorPicker بسته شد (قبلاً جا افتاده بود)
 
 // اجرای تابع هنگام بارگذاری صفحه
 document.addEventListener('DOMContentLoaded', () => {
@@ -470,10 +472,3 @@ document.addEventListener('DOMContentLoaded', () => {
     initColorPicker();
   }
 });
-
-
-
-
-
-
-
