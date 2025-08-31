@@ -322,39 +322,39 @@ const questionHrr = quizHrr.querySelector('h3');
 // توابع هدایت
 function funcNormal() {
   localStorage.setItem("Result", "https://www.koorrangi.ir/%d8%ac%d9%88%d8%a7%d8%a8-%d8%aa%d8%b3%d8%aa-%da%a9%d9%88%d8%b1%d8%b1%d9%86%da%af%db%8c1/");
-  document.location.href = "https://www.koorrangi.ir/%d9%be%d8%b1%d8%af%d8%a7%d8%ae%d8%aa/";
+  document.location.href = "https://www.koorrangi.ir/%d8%ac%d9%88%d8%a7%d8%a8-%d8%aa%d8%b3%d8%aa-%da%a9%d9%88%d8%b1%d8%b1%d9%86%da%af%db%8c1/";
 }
 function funcTotal() {
   localStorage.setItem("Result", "https://www.koorrangi.ir/%d8%ac%d9%88%d8%a7%d8%a8-%d8%aa%d8%b3%d8%aa-%da%a9%d9%88%d8%b1%d8%b1%d9%86%da%af%db%8c2/");
-  document.location.href = "https://www.koorrangi.ir/%d9%be%d8%b1%d8%af%d8%a7%d8%ae%d8%aa/";
+  document.location.href = "https://www.koorrangi.ir/%d8%ac%d9%88%d8%a7%d8%a8-%d8%aa%d8%b3%d8%aa-%da%a9%d9%88%d8%b1%d8%b1%d9%86%da%af%db%8c2/";
 }
 function funcProtanWeak() {
   localStorage.setItem("Result", "https://www.koorrangi.ir/%d8%ac%d9%88%d8%a7%d8%a8-%d8%aa%d8%b3%d8%aa-%da%a9%d9%88%d8%b1%d8%b1%d9%86%da%af%db%8c3/");
-  document.location.href = "https://www.koorrangi.ir/%d9%be%d8%b1%d8%af%d8%a7%d8%ae%d8%aa/";
+  document.location.href = "https://www.koorrangi.ir/%d8%ac%d9%88%d8%a7%d8%a8-%d8%aa%d8%b3%d8%aa-%da%a9%d9%88%d8%b1%d8%b1%d9%86%da%af%db%8c3/";
 }
 function funcProtanStrong() {
   localStorage.setItem("Result", "https://www.koorrangi.ir/%d8%ac%d9%88%d8%a7%d8%a8-%d8%aa%d8%b3%d8%aa-%da%a9%d9%88%d8%b1%d8%b1%d9%86%da%af%db%8c4/");
-  document.location.href = "https://www.koorrangi.ir/%d9%be%d8%b1%d8%af%d8%a7%d8%ae%d8%aa/";
+  document.location.href = "https://www.koorrangi.ir/%d8%ac%d9%88%d8%a7%d8%a8-%d8%aa%d8%b3%d8%aa-%da%a9%d9%88%d8%b1%d8%b1%d9%86%da%af%db%8c4/";
 }
 function funcDeutanWeak() {
   localStorage.setItem("Result", "https://www.koorrangi.ir/%d8%ac%d9%88%d8%a7%d8%a8-%d8%aa%d8%b3%d8%aa-%da%a9%d9%88%d8%b1%d8%b1%d9%86%da%af%db%8c5/");
-  document.location.href = "https://www.koorrangi.ir/%d9%be%d8%b1%d8%af%d8%a7%d8%ae%d8%aa/";
+  document.location.href = "https://www.koorrangi.ir/%d8%ac%d9%88%d8%a7%d8%a8-%d8%aa%d8%b3%d8%aa-%da%a9%d9%88%d8%b1%d8%b1%d9%86%da%af%db%8c5/";
 }
 function funcDeutanStrong() {
   localStorage.setItem("Result", "https://www.koorrangi.ir/%d8%ac%d9%88%d8%a7%d8%a8-%d8%aa%d8%b3%d8%aa-%da%a9%d9%88%d8%b1%d8%b1%d9%86%da%af%db%8c6/");
-  document.location.href = "https://www.koorrangi.ir/%d9%be%d8%b1%d8%af%d8%a7%d8%ae%d8%aa/";
+  document.location.href = "https://www.koorrangi.ir/%d8%ac%d9%88%d8%a7%d8%a8-%d8%aa%d8%b3%d8%aa-%da%a9%d9%88%d8%b1%d8%b1%d9%86%da%af%db%8c6/";
 }
 function funcDeutanProtanWeak() {
   localStorage.setItem("Result", "https://www.koorrangi.ir/%d8%ac%d9%88%d8%a7%d8%a8-%d8%aa%d8%b3%d8%aa-%da%a9%d9%88%d8%b4%d8%b1%d9%86%da%af%db%8c7/");
-  document.location.href = "https://www.koorrangi.ir/%d9%be%d8%b1%d8%af%d8%a7%d8%ae%d8%aa/";
+  document.location.href = "https://www.koorrangi.ir/%d8%ac%d9%88%d8%a7%d8%a8-%d8%aa%d8%b3%d8%aa-%da%a9%d9%88%d8%b1%d8%b1%d9%86%da%af%db%8c7/";
 }
 function funcDeutanProtan() {
   localStorage.setItem("Result", "https://www.koorrangi.ir/%d8%ac%d9%88%d8%a7%d8%a8-%d8%aa%d8%b3%d8%aa-%da%a9%d9%88%d8%b1%d8%b1%d9%86%da%af%db%8c8/");
-  document.location.href = "https://www.koorrangi.ir/%d9%be%d8%b1%d8%af%d8%a7%d8%ae%d8%aa/";
+  document.location.href = "https://www.koorrangi.ir/%d8%ac%d9%88%d8%a7%d8%a8-%d8%aa%d8%b3%d8%aa-%da%a9%d9%88%d8%b1%d8%b1%d9%86%da%af%db%8c8/";
 }
 function funcTetaranTritan() {
   localStorage.setItem("Result", "https://www.koorrangi.ir/%d8%ac%d9%88%d8%a7%d8%a8-%d8%aa%d8%b3%d8%aa-%da%a9%d9%88%d8%b1%d8%b1%d9%86%da%af%db%8c9/");
-  document.location.href = "https://www.koorrangi.ir/%d9%be%d8%b1%d8%af%d8%a7%d8%ae%d8%aa/";
+  document.location.href = "https://www.koorrangi.ir/%d8%ac%d9%88%d8%a7%d8%a8-%d8%aa%d8%b3%d8%aa-%da%a9%d9%88%d8%b1%d8%b1%d9%86%da%af%db%8c9/";
 }
 
 // تابع نمایش پیام خطا
