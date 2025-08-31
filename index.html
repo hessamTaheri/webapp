@@ -9,78 +9,80 @@
   <link rel="apple-touch-icon" href="https://example.com/icon.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="theme-color" content="#007bff">
+  <meta name="theme-color" content="#3B5998">
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    @font-face {
-      font-family: 'Vazir';
-      src: url('https://cdn.fontcdn.ir/Font/Persian/Vazir/Vazir.woff2') format('woff2');
-      font-weight: normal;
-    }
     body {
-      font-family: 'Vazir', Arial, sans-serif;
+      font-family: 'Vazirmatn', sans-serif;
       margin: 0;
-      padding: 0;
-      background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
+      padding: 0 15px;
+      background: #E0E0E0;
       color: #333333;
       overflow: hidden;
+      direction: rtl;
+      touch-action: manipulation;
     }
     header, footer, aside, .site-header, .site-footer, .sidebar {
       display: none !important;
     }
     :root {
-      --bg-color: #ffffff;
+      --bg-color: #E0E0E0;
       --text-color: #333333;
-      --shadow-color: rgba(0, 0, 0, 0.15);
-      --primary-color: #007bff;
-      --primary-hover: #0056b3;
-      --accent-color: #f8f9fa;
-    }
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg-color: #1a1a1a;
-        --text-color: #ffffff;
-        --shadow-color: rgba(255, 255, 255, 0.15);
-        --accent-color: #2c2c2c;
-      }
-      body {
-        background: linear-gradient(135deg, #2c2c2c, #1a1a1a);
-      }
+      --secondary-text: #5D6D7E;
+      --shadow-light: rgba(255, 255, 255, 0.7);
+      --shadow-dark: rgba(0, 0, 0, 0.2);
+      --primary-color: #3B5998;
+      --primary-hover: #2A4373;
+      --accent-color: #F5F5F5;
     }
     #app-home {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-      gap: 20px;
-      padding: 20px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      padding: 20px 0;
       height: 100vh;
       overflow-y: auto;
+      background: var(--bg-color);
+      padding-right: 20px; /* فاصله از سمت راست */
     }
     .app-icon {
       text-align: center;
       background: var(--bg-color);
-      border-radius: 16px;
-      padding: 20px;
-      box-shadow: 0 6px 12px var(--shadow-color);
+      border-radius: 12px;
+      padding: 20px 15px;
+      box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
       cursor: pointer;
-      transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+      transition: all 0.3s ease;
+      height: 120px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      margin: 5px 0; /* مارجین عمودی برای نزدیک‌تر شدن آیکون‌ها */
     }
     .app-icon:hover {
-      transform: translateY(-5px);
-      background: var(--primary-color);
-      color: #fff;
-      box-shadow: 0 8px 16px var(--shadow-color);
+      transform: translateY(-2px);
+      box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+      background: linear-gradient(145deg, var(--bg-color), var(--accent-color));
+    }
+    .app-icon:active {
+      box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+      transform: translateY(0);
+      background: var(--bg-color);
     }
     .app-icon i {
-      font-size: 48px;
-      margin-bottom: 12px;
+      font-size: 40px;
+      margin-bottom: 10px;
       color: var(--primary-color);
     }
-    .app-icon:hover i {
-      color: #fff;
+    .app-icon:hover i, .app-icon:hover span {
+      color: var(--primary-hover);
     }
     .app-icon span {
-      display: block;
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 500;
+      color: var(--text-color);
     }
     .tool-page {
       display: none;
@@ -91,125 +93,156 @@
       height: 100%;
       overflow: auto;
       background: var(--bg-color);
-      padding: 20px;
+      padding: 15px;
       z-index: 10;
     }
     .tool-page.active {
       display: block;
     }
-    .back-btn, button {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      padding: 12px 20px;
-      font-size: 16px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-      box-shadow: 0 4px 8px var(--shadow-color);
-    }
-    .back-btn:hover, button:hover {
-      background: var(--primary-hover);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 12px var(--shadow-color);
-    }
+.back-btn, button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--bg-color);
+  color: var(--text-color);
+  border: none;
+  border-radius: 8px;
+  padding: 10px 18px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+  transition: all 0.3s ease;
+  margin: 5px 0; /* مارجین عمودی برای دکمه‌ها */
+}
+
+.back-btn:hover, button:hover {
+  background: linear-gradient(145deg, var(--bg-color), var(--accent-color));
+  box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+  color: var(--primary-hover);
+}
+
+.back-btn:active, button:active {
+  box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+  transform: translateY(2px); /* دکمه به سمت پایین حرکت کند */
+  background: var(--bg-color);
+}
     .container {
       background: var(--bg-color);
-      border-radius: 16px;
-      box-shadow: 0 10px 20px var(--shadow-color);
-      padding: 24px;
-      max-width: 600px;
-      margin: 0 auto;
+      border-radius: 12px;
+      box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+      padding: 20px;
+      max-width: 90%;
+      margin: 15px auto;
       text-align: center;
     }
+    .container,
+    .quizContainer {
+      margin-right: 20px;
+    }
+
+    .back-btn {
+      margin-right: 20px;
+    }
     h1, h2 {
-      font-size: 24px;
+      font-size: 22px;
       font-weight: 600;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
       color: var(--text-color);
     }
     .modes {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 12px;
-      margin: 20px 0;
+      gap: 10px;
+      margin: 15px 0;
     }
     .modes label {
-      font-size: 14px;
+      font-size: 13px;
       cursor: pointer;
-      padding: 8px 16px;
-      background: var(--accent-color);
-      border-radius: 8px;
-      transition: background 0.3s ease, color 0.3s ease;
-      box-shadow: 0 2px 4px var(--shadow-color);
+      padding: 8px 14px;
+      background: var(--bg-color);
+      border-radius: 20px;
+      box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+      transition: all 0.3s ease;
+      color: var(--text-color);
     }
     .modes input[type="radio"] {
       display: none;
     }
     .modes input[type="radio"]:checked + span {
-      background: var(--primary-color);
-      color: #fff;
-      box-shadow: 0 4px 8px var(--shadow-color);
+      background: linear-gradient(145deg, var(--bg-color), var(--accent-color));
+      box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+      color: var(--primary-color);
+      font-weight: bold;
+      /* حذف scale و transition از اینجا */
+    }
+    .modes label span {
+      transition: all 0.15s;
+    }
+
+    .modes label:active span {
+      transform: scale(0.96);
+      box-shadow: inset 3px 3px 8px var(--shadow-dark), inset -3px -3px 8px var(--shadow-light);
     }
     input[type="range"] {
       width: 100%;
-      max-width: 200px;
+      max-width: 180px;
       accent-color: var(--primary-color);
-      height: 8px;
-      border-radius: 4px;
-      background: var(--accent-color);
+      height: 6px;
+      border-radius: 3px;
+      background: linear-gradient(145deg, var(--shadow-dark), var(--shadow-light));
       cursor: pointer;
     }
     canvas {
-      border: 2px solid var(--accent-color);
+      border: 1px solid var(--accent-color);
       width: 100%;
       height: auto;
-      border-radius: 12px;
+      border-radius: 8px;
       max-width: 100%;
+      box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
     }
     .controls {
       display: flex;
       flex-wrap: wrap;
-      gap: 12px;
+      gap: 10px;
       align-items: center;
       justify-content: center;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
     }
     input[type="text"] {
       flex: 1;
-      padding: 12px;
-      font-size: 16px;
-      border: 1px solid var(--accent-color);
+      padding: 10px;
+      font-size: 14px;
+      border: none;
       border-radius: 8px;
       min-width: 200px;
       background: var(--bg-color);
+      box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
       color: var(--text-color);
     }
     input[type="text"]::placeholder {
-      color: #777;
+      color: var(--secondary-text);
     }
     iframe {
       width: 100%;
       height: 60vh;
       border: none;
-      border-radius: 12px;
-      box-shadow: 0 4px 8px var(--shadow-color);
+      border-radius: 8px;
+      box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+      touch-action: manipulation;
+      -webkit-overflow-scrolling: touch;
     }
     .error-message, .warning-message, .hint-text {
-      font-size: 14px;
-      color: #777;
-      margin: 12px 0;
+      font-size: 13px;
+      color: var(--secondary-text);
+      margin: 10px 0;
     }
     #tool-camera-simulator .camera-container {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
     }
     @media (orientation: landscape) {
       #tool-camera-simulator .camera-container {
@@ -220,20 +253,21 @@
       }
     }
     #orientation-note {
-      font-size: 14px;
-      color: #777;
-      margin-top: 12px;
-      background: var(--accent-color);
+      font-size: 13px;
+      color: var(--secondary-text);
+      margin-top: 10px;
+      background: var(--bg-color);
       padding: 8px;
       border-radius: 8px;
+      box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
     }
     #tool-color-picker .video-container {
       position: relative;
       width: 100%;
       overflow: hidden;
-      border-radius: 12px;
-      margin-bottom: 20px;
-      box-shadow: 0 4px 8px var(--shadow-color);
+      border-radius: 8px;
+      margin-bottom: 15px;
+      box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
     }
     #tool-color-picker #canvas-color.fixed {
       position: absolute;
@@ -245,29 +279,30 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      border: 3px solid var(--bg-color);
+      border: 2px solid var(--accent-color);
       border-radius: 50%;
-      box-shadow: 0 0 10px var(--shadow-color);
+      box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
       z-index: 10;
     }
     #tool-picture-simulator .drop-area {
-      border: 2px dashed var(--accent-color);
-      padding: 20px;
-      border-radius: 12px;
+      border: 2px dashed var(--secondary-text);
+      padding: 15px;
+      border-radius: 8px;
       cursor: pointer;
-      transition: border-color 0.3s ease, background 0.3s ease;
-      background: var(--accent-color);
+      transition: all 0.3s ease;
+      background: var(--bg-color);
+      box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
     }
     #tool-picture-simulator .drop-area:hover, .drop-area.active {
       border-color: var(--primary-color);
-      background: var(--bg-color);
+      background: var(--accent-color);
     }
     #tool-picture-simulator .sample-list {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
-      gap: 12px;
+      gap: 10px;
       justify-items: center;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
     }
     #tool-picture-simulator .sample-img {
       width: 80px;
@@ -275,45 +310,51 @@
       cursor: pointer;
       border: 2px solid transparent;
       border-radius: 8px;
-      transition: transform 0.3s ease, border 0.3s ease, box-shadow 0.3s ease;
+      transition: all 0.3s ease;
+      box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
     }
     #tool-picture-simulator .sample-img:hover, .sample-img:focus {
       border: 2px solid var(--primary-color);
       transform: scale(1.1);
-      box-shadow: 0 4px 8px var(--shadow-color);
+      box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
     }
     .quizContainer {
       background: var(--bg-color);
-      padding: 24px;
-      border-radius: 16px;
-      box-shadow: 0 10px 20px var(--shadow-color);
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+      margin-top: 50px;
     }
     .quizContainer .bar {
       background: var(--accent-color);
-      border-radius: 20px;
-      height: 10px;
-      margin: 12px 0;
+      border-radius: 15px;
+      height: 8px;
+      margin: 10px 0;
+      box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
     }
     .quizContainer #childbar-ishihara, .quizContainer #childbar-hrr {
       background: var(--primary-color);
       height: 100%;
-      border-radius: 20px;
+      border-radius: 15px;
       transition: width 0.3s ease;
     }
     .quizContainer ul li {
       list-style: none;
-      margin: 12px 0;
+      margin: 10px 0;
     }
     .quizContainer label {
       cursor: pointer;
-      padding: 8px 16px;
-      background: var(--accent-color);
-      border-radius: 8px;
-      transition: background 0.3s ease, color 0.3s ease;
+      padding: 8px 14px;
+      background: var(--bg-color);
+      border-radius: 20px;
+      box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+      transition: all 0.3s ease;
+      color: var(--text-color);
     }
     .quizContainer input[type="radio"]:checked + label {
-      background: var(--primary-color);
-      color: #fff;
+      background: linear-gradient(145deg, var(--bg-color), var(--accent-color));
+      color: var(--primary-color);
+      box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
     }
     #optionContainer-ishihara, #optionContainer-hrr {
       display: none;
@@ -321,42 +362,83 @@
     #quiz-ishihara, #quiz-hrr {
       display: block;
     }
-    #add-to-home {
+    #fullscreen-prompt, #a2hs-prompt {
       position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 100;
-      padding: 12px 24px;
-      background: var(--primary-color);
-      color: #fff;
-      border-radius: 20px;
-      cursor: pointer;
-      box-shadow: 0 4px 8px var(--shadow-color);
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
     }
-    #install-instructions {
-      display: none;
-      position: fixed;
-      bottom: 80px;
-      left: 50%;
-      transform: translateX(-50%);
+    #fullscreen-prompt .prompt-container, #a2hs-prompt .prompt-container {
       background: var(--bg-color);
-      padding: 12px 20px;
       border-radius: 12px;
-      box-shadow: 0 4px 8px var(--shadow-color);
+      padding: 20px;
       text-align: center;
+      box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
       max-width: 300px;
-      color: var(--text-color);
-      font-size: 14px;
     }
-    #tool-website-simulator .filter-protanopia { filter: url(#protanopia); }
-    #tool-website-simulator .filter-deuteranopia { filter: url(#deuteranopia); }
-    #tool-website-simulator .filter-tritanopia { filter: url(#tritanopia); }
-    #tool-website-simulator .filter-achromatopsia { filter: url(#achromatopsia); }
+    #fullscreen-prompt h2, #a2hs-prompt h2 {
+      font-size: 18px;
+      margin-bottom: 15px;
+      color: var(--text-color);
+    }
+    #fullscreen-prompt button, #a2hs-prompt button {
+      width: 100%;
+      padding: 10px;
+      font-size: 14px;
+      margin: 5px 0; /* مارجین عمودی برای دکمه‌های دیالوگ */
+    }
+    #a2hs-prompt p {
+      font-size: 14px;
+      color: var(--secondary-text);
+      margin-bottom: 15px;
+    }
+    @media (max-width: 480px) {
+      #app-home { grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 10px 0 10px 0; }
+      .app-icon { padding: 15px; height: 100px; }
+      .app-icon i { font-size: 36px; }
+      .app-icon span { font-size: 13px; }
+      .container { padding: 15px; margin: 10px auto; }
+      .back-btn, button { padding: 8px 15px; font-size: 13px; }
+      h1, h2 { font-size: 20px; }
+      iframe { height: 50vh; }
+      #fullscreen-prompt .prompt-container, #a2hs-prompt .prompt-container { max-width: 80%; }
+      .container,
+      .quizContainer {
+        margin-right: 10px;
+        margin-left: 10px; /* اضافه شد */
+      }
+      .back-btn {
+        margin-right: 10px;
+        margin-left: 10px; /* اضافه شد */
+      }
+    }
+    @media (min-width: 481px) and (max-width: 1024px) {
+      .container { max-width: 95%; }
+      iframe { height: 55vh; }
+    }
   </style>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
+  <div id="fullscreen-prompt">
+    <div class="prompt-container">
+      <h2>برای تجربه بهتر، حالت تمام‌صفحه را فعال کنید</h2>
+      <button onclick="enterFullscreen()">فعال کردن تمام‌صفحه</button>
+      <button onclick="document.getElementById('fullscreen-prompt').style.display='none'">بعداً</button>
+    </div>
+  </div>
+  <div id="a2hs-prompt" style="display: none;">
+    <div class="prompt-container">
+      <h2>اضافه کردن به صفحه اصلی</h2>
+      <p>برای دسترسی سریع‌تر، این اپلیکیشن را به صفحه اصلی گوشی خود اضافه کنید:<br>1. روی دکمه Share در مرورگر (کروم یا سافاری) بزنید.<br>2. گزینه "Add to Home Screen" را انتخاب کنید.</p>
+      <button onclick="closeA2HSPrompt()">متوجه شدم</button>
+    </div>
+  </div>
   <div id="app-home">
     <div class="app-icon" onclick="openTool('camera-simulator')">
       <i class="fas fa-camera"></i>
@@ -386,30 +468,32 @@
 
   <div id="tool-camera-simulator" class="tool-page">
     <button class="back-btn" onclick="closeTool()">برگشت</button>
-    <h2>شبیه‌ساز کوررنگی</h2>
-    <div class="camera-container">
-      <video id="video-camera-real" autoplay playsinline style="display: none;"></video>
-      <canvas id="canvas-camera-real"></canvas>
-      <video id="video-camera" autoplay playsinline style="display: none;"></video>
-      <canvas id="canvas-camera"></canvas>
-    </div>
-    <p id="orientation-note">اگر گوشی را به حالت افقی بچرخانید، تصویر واقعی (چپ) و شبیه‌سازی‌شده (راست) کنار هم نمایش داده می‌شوند. در حالت عمودی فقط تصویر شبیه‌سازی‌شده نشان داده می‌شود.</p>
-    <div id="controls-camera" class="controls">
-      <div class="modes">
-        <label><input type="radio" name="mode-camera" value="none" checked><span>عادی</span></label>
-        <label><input type="radio" name="mode-camera" value="protan"><span>کوررنگی قرمز</span></label>
-        <label><input type="radio" name="mode-camera" value="deutan"><span>کوررنگی سبز</span></label>
-        <label><input type="radio" name="mode-camera" value="tritan"><span>کوررنگی آبی</span></label>
-        <label><input type="radio" name="mode-camera" value="achroma"><span>کوررنگی کامل</span></label>
+    <div class="container">
+      <h2>شبیه‌ساز کوررنگی</h2>
+      <div class="camera-container">
+        <video id="video-camera-real" autoplay playsinline style="display: none;"></video>
+        <canvas id="canvas-camera-real"></canvas>
+        <video id="video-camera" autoplay playsinline style="display: none;"></video>
+        <canvas id="canvas-camera"></canvas>
       </div>
-      <label for="intensity-camera">شدت:</label>
-      <input type="range" id="intensity-camera" min="0" max="1" step="0.01" value="1">
-      <button id="switchCamera-camera" title="تعویض دوربین">
-        <i class="fas fa-camera-rotate"></i>
-      </button>
-      <button id="startCamera-camera" title="شروع دوربین">
-        <i class="fas fa-video"></i>
-      </button>
+      <p id="orientation-note">اگر گوشی را به حالت افقی بچرخانید، تصویر واقعی (چپ) و شبیه‌سازی‌شده (راست) کنار هم نمایش داده می‌شوند. در حالت عمودی فقط تصویر شبیه‌سازی‌شده نشان داده می‌شود.</p>
+      <div id="controls-camera" class="controls">
+        <div class="modes">
+          <label><input type="radio" name="mode-camera" value="none" checked><span>عادی</span></label>
+          <label><input type="radio" name="mode-camera" value="protan"><span>کوررنگی قرمز</span></label>
+          <label><input type="radio" name="mode-camera" value="deutan"><span>کوررنگی سبز</span></label>
+          <label><input type="radio" name="mode-camera" value="tritan"><span>کوررنگی آبی</span></label>
+          <label><input type="radio" name="mode-camera" value="achroma"><span>کوررنگی کامل</span></label>
+        </div>
+        <label for="intensity-camera">شدت:</label>
+        <input type="range" id="intensity-camera" min="0" max="1" step="0.01" value="1">
+        <button id="switchCamera-camera" title="تعویض دوربین">
+          <i class="fas fa-camera-rotate"></i>
+        </button>
+        <button id="startCamera-camera" title="شروع دوربین">
+          <i class="fas fa-video"></i>
+        </button>
+      </div>
     </div>
   </div>
 
@@ -507,15 +591,15 @@
         <button id="pauseResumeBtn-color"><i id="pauseResumeIcon-color" class="fas fa-pause"></i></button>
         <button id="playColorBtn-color"><i class="fas fa-volume-up"></i></button>
       </div>
-      <div id="colorInfo-color" class="text-center p-6 bg-gray-50 rounded-lg shadow-inner">
-        <p class="text-gray-700 text-lg mb-2"><span class="font-bold">رنگ: </span><span id="colorName-color" class="text-indigo-600">در انتظار...</span></p>
-        <p class="text-gray-700 text-lg mb-2"><span class="font-bold">کد هگز: </span><span id="hexCode-color" class="font-mono text-indigo-600">-</span></p>
-        <p class="text-gray-700 text-lg mb-4"><span class="font-bold">کد RGB: </span><span id="rgbCode-color" class="font-mono text-indigo-600">-</span></p>
+      <div id="colorInfo-color" class="text-center p-4 rounded-lg shadow-inner">
+        <p class="text-lg mb-2"><span class="font-bold">رنگ: </span><span id="colorName-color">در انتظار...</span></p>
+        <p class="text-lg mb-2"><span class="font-bold">کد هگز: </span><span id="hexCode-color" class="font-mono">-</span></p>
+        <p class="text-lg mb-4"><span class="font-bold">کد RGB: </span><span id="rgbCode-color" class="font-mono">-</span></p>
         <div id="colorBox-color" class="w-16 h-16 mx-auto border border-gray-400 rounded-full shadow-inner"></div>
       </div>
       <div id="messageModal-color" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center p-4 z-50">
         <div class="bg-white rounded-lg shadow-xl p-6 max-w-sm w-full text-center">
-          <p id="modalMessage-color" class="text-gray-800 text-lg mb-4"></p>
+          <p id="modalMessage-color" class="text-lg mb-4"></p>
           <button id="closeModalBtn-color" class="bg-red-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-red-600 transition-colors">بستن</button>
         </div>
       </div>
@@ -575,6 +659,35 @@
     <button id="dismiss-a2hs">بعداً نشان بده</button>
   </div>
 
+  <script>
+    function enterFullscreen() {
+      const elem = document.documentElement;
+      try {
+        if (elem.requestFullscreen) {
+          elem.requestFullscreen();
+        } else if (elem.webkitRequestFullscreen) { /* سافاری */
+          elem.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT); /* پشتیبانی بهتر برای iOS */
+        } else if (elem.msRequestFullscreen) { /* IE11 */
+          elem.msRequestFullscreen();
+        }
+      } catch (e) {
+        console.error('Fullscreen error:', e);
+      }
+      document.getElementById('fullscreen-prompt').style.display = 'none';
+    }
+
+    function closeA2HSPrompt() {
+      localStorage.setItem('a2hsShown', 'true');
+      document.getElementById('a2hs-prompt').style.display = 'none';
+    }
+
+    // نمایش دیالوگ Add to Home Screen فقط بار اول
+    window.onload = function() {
+      if (!localStorage.getItem('a2hsShown')) {
+        document.getElementById('a2hs-prompt').style.display = 'flex';
+      }
+    };
+  </script>
   <script src="js/main.js"></script>
   <script src="js/camera-simulator.js"></script>
   <script src="js/picture-simulator.js"></script>
