@@ -88,7 +88,7 @@ const ishiharaQuestions = [
 
 let currentIndexIshihara = 0;
 let scoreIshihara = 0;
-let userAnswers = new Array(ishiharaQuestions.length).fill(null); // برای ذخیره پاسخ‌های کاربر
+let userAnswers = new Array(ishiharaQuestions.length).fill(null);
 
 const imgIshihara = document.getElementById("mamad-ishihara");
 const optionsListIshihara = document.getElementById("nowShowPic-ishihara");
@@ -114,6 +114,20 @@ function funcDeutanProtanWeak() { document.location.href = "https://www.koorrang
 function funcDeutanProtan() { document.location.href = "https://www.koorrangi.ir/%d8%ac%d9%88%d8%a7%d8%a8-%d8%aa%d8%b3%d8%aa-%da%a9%d9%88%d8%b1%d8%b1%d9%86%da%af%db%8c8/"; }
 function funcTetaranTritan() { document.location.href = "https://www.koorrangi.ir/%d8%ac%d9%88%d8%a7%d8%a8-%d8%aa%d8%b3%d8%aa-%da%a9%d9%88%d8%b1%d8%b1%d9%86%da%af%db%8c9/"; }
 
+// تابع نمایش پیام خطا
+function showError(message) {
+  const errorDiv = document.createElement('div');
+  errorDiv.className = 'error-message';
+  errorDiv.style.cssText = `
+    position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+    background: #ff4444; color: white; padding: 10px 20px; border-radius: 8px;
+    font-family: 'Vazirmatn', sans-serif; z-index: 1000;
+  `;
+  errorDiv.textContent = message;
+  document.body.appendChild(errorDiv);
+  setTimeout(() => errorDiv.remove(), 5000);
+}
+
 // تابع به‌روزرسانی نوار پیشرفت
 function changeWidthBar(X) {
   const percentage = Math.round(((currentIndexIshihara + 1) / X.length) * 100);
@@ -123,28 +137,62 @@ function changeWidthBar(X) {
 
 // تابع بارگذاری سوال
 function loadQuestionIshihara() {
-  const q = ishiharaQuestions[currentIndexIshihara];
-  imgIshihara.src = q.image;
-  optionsListIshihara.style.display = "none"; // مخفی کردن گزینه‌ها تا لود کامل تصویر
-  nextBtnIshihara.style.display = "none";
+  if (!imgIshihara || !optionsListIshihara) {
+    showError('المنت‌های تصویر یا گزینه‌ها یافت نشدند.');
+    console.error('المنت‌های موردنیاز وجود ندارند:', { imgIshihara: !!imgIshihara, optionsListIshihara: !!optionsListIshihara });
+    return;
+  }
 
-  // نمایش گزینه‌ها بعد از لود کامل تصویر
+  const q = ishiharaQuestions[currentIndexIshihara];
+  optionsListIshihara.style.display = "none";
+  nextBtnIshihara.style.display = "none";
+  imgIshihara.style.display = "none";
+  imgIshihara.src = '';
+  imgIshihara.src = q.image;
+
   imgIshihara.onload = () => {
-    optionsListIshihara.style.display = "block";
+    console.log('تصویر لود شد:', q.image);
+    imgIshihara.style.display = "block";
+    optionsListIshihara.style.display = "flex";
     q.options.forEach((opt, i) => {
-      optionLabelsIshihara[i].textContent = opt;
+      if (optionLabelsIshihara[i]) {
+        optionLabelsIshihara[i].textContent = opt;
+      } else {
+        console.error(`لیبل گزینه ${i + 1} یافت نشد`);
+      }
     });
-    // پاک کردن انتخاب قبلی
-    document.querySelectorAll("input[name='answer-ishihara']").forEach(r => r.checked = false);
-    // به‌روزرسانی نوار پیشرفت
+    document.querySelectorAll("input[name='answer-ishihara']").forEach(r => {
+      r.checked = false;
+    });
     changeWidthBar(ishiharaQuestions);
     progressNumIshihara.textContent = `${currentIndexIshihara + 1} / ${ishiharaQuestions.length}`;
   };
 
   imgIshihara.onerror = () => {
     console.error('خطا در بارگذاری تصویر:', q.image);
-    alert('خطا در بارگذاری تصویر سوال. لطفاً اتصال اینترنت را بررسی کنید.');
+    showError('خطا در بارگذاری تصویر سوال. لطفاً اتصال اینترنت یا آدرس تصویر را بررسی کنید.');
+    imgIshihara.style.display = "none";
+    optionsListIshihara.style.display = "flex";
+    q.options.forEach((opt, i) => {
+      if (optionLabelsIshihara[i]) {
+        optionLabelsIshihara[i].textContent = opt;
+      }
+    });
   };
+
+  // فال‌بک برای نمایش
+  setTimeout(() => {
+    if (imgIshihara.style.display !== "block" || optionsListIshihara.style.display !== "flex") {
+      console.warn('فال‌بک: نمایش تصویر و گزینه‌ها به دلیل تأخیر');
+      imgIshihara.style.display = "block";
+      optionsListIshihara.style.display = "flex";
+      q.options.forEach((opt, i) => {
+        if (optionLabelsIshihara[i]) {
+          optionLabelsIshihara[i].textContent = opt;
+        }
+      });
+    }
+  }, 1000);
 }
 
 // تابع بررسی پاسخ
@@ -152,7 +200,7 @@ function checkAnswerIshihara() {
   const q = ishiharaQuestions[currentIndexIshihara];
   const selected = document.querySelector("input[name='answer-ishihara']:checked");
   if (!selected) {
-    alert("لطفاً یک گزینه انتخاب کنید");
+    showError("لطفاً یک گزینه انتخاب کنید");
     return;
   }
   const answer = document.querySelector(`label[for=${selected.id}]`).textContent;
@@ -160,7 +208,7 @@ function checkAnswerIshihara() {
   if (answer === q.correct) {
     scoreIshihara++;
   } else if (currentIndexIshihara === 0) {
-    alert("پاسخ شما نادرست است! لطفاً دوباره تلاش کنید.");
+    showError("پاسخ شما نادرست است! لطفاً دوباره تلاش کنید.");
   }
   nextBtnIshihara.style.display = "inline-block";
 }
@@ -183,40 +231,34 @@ function showResultIshihara() {
   resetBtnIshihara.style.display = "inline-block";
   progressNumIshihara.textContent = `امتیاز شما: ${scoreIshihara} از ${ishiharaQuestions.length}`;
 
-  // منطق هدایت بر اساس امتیاز و پاسخ‌های خاص
   const totalQuestions = ishiharaQuestions.length;
   const correctRatio = scoreIshihara / totalQuestions;
 
   if (correctRatio >= 0.9) {
-    // دید نرمال (90% یا بیشتر پاسخ‌های درست)
     funcNormal();
   } else if (correctRatio <= 0.3) {
-    // کوررنگی کامل
     funcTotal();
   } else {
-    // بررسی سوالات تشخیصی (14, 15, 16, 17)
-    const q14Correct = userAnswers[13] === ishiharaQuestions[13].correct; // هیچ کدام
-    const q15Correct = userAnswers[14] === ishiharaQuestions[14].correct; // هیچ کدام
-    const q16Answer = userAnswers[15]; // پروتان: 6، دوتان: 2
-    const q17Answer = userAnswers[16]; // پروتان: 2، دوتان: 4
+    const q14Correct = userAnswers[13] === ishiharaQuestions[13].correct;
+    const q15Correct = userAnswers[14] === ishiharaQuestions[14].correct;
+    const q16Answer = userAnswers[15];
+    const q17Answer = userAnswers[16];
 
     if (q14Correct && q15Correct) {
-      // کوررنگی قرمز-سبز محتمل است
       if (q16Answer === "6" && q17Answer === "2") {
-        funcProtanStrong(); // پروتان قوی
+        funcProtanStrong();
       } else if (q16Answer === "2" && q17Answer === "4") {
-        funcDeutanStrong(); // دوتان قوی
+        funcDeutanStrong();
       } else if (q16Answer === "6" || q17Answer === "2") {
-        funcProtanWeak(); // پروتان ضعیف
+        funcProtanWeak();
       } else if (q16Answer === "2" || q17Answer === "4") {
-        funcDeutanWeak(); // دوتان ضعیف
+        funcDeutanWeak();
       } else if (q16Answer && q17Answer) {
-        funcDeutanProtan(); // ترکیبی قوی
+        funcDeutanProtan();
       } else {
-        funcDeutanProtanWeak(); // ترکیبی ضعیف
+        funcDeutanProtanWeak();
       }
     } else {
-      // اگر سوالات تشخیصی درست نباشند، احتمال تریتان یا نامشخص
       funcTetaranTritan();
     }
   }
@@ -232,24 +274,38 @@ function resetQuizIshihara() {
   loadQuestionIshihara();
 }
 
-// Event Listenerها
-nextBtnIshihara.addEventListener("click", nextQuestionIshihara);
-resetBtnIshihara.addEventListener("click", resetQuizIshihara);
+// تابع اولیه‌سازی تست
+function initIshiharaTest() {
+  // بررسی وجود المنت‌ها
+  if (!imgIshihara || !optionsListIshihara || !nextBtnIshihara || !resetBtnIshihara || !progressBarIshihara || !progressNumIshihara || optionLabelsIshihara.some(label => !label)) {
+    console.error('یکی از المنت‌های موردنیاز برای تست ایشی‌هारा یافت نشد:', {
+      imgIshihara: !!imgIshihara,
+      optionsListIshihara: !!optionsListIshihara,
+      nextBtnIshihara: !!nextBtnIshihara,
+      resetBtnIshihara: !!resetBtnIshihara,
+      progressBarIshihara: !!progressBarIshihara,
+      progressNumIshihara: !!progressNumIshihara,
+      optionLabelsIshihara: optionLabelsIshihara.map((label, i) => `option${i + 1}: ${!!label}`)
+    });
+    showError('خطا: نمی‌توان تست ایشی‌هारा را بارگذاری کرد. لطفاً ساختار HTML را بررسی کنید.');
+    return;
+  }
 
-document.querySelectorAll("input[name='answer-ishihara']").forEach(input => {
-  input.addEventListener("change", checkAnswerIshihara);
-});
+  // Event Listenerها
+  nextBtnIshihara.addEventListener("click", nextQuestionIshihara);
+  resetBtnIshihara.addEventListener("click", resetQuizIshihara);
 
-// بررسی وجود المنت‌ها
-if (!imgIshihara || !optionsListIshihara || !nextBtnIshihara || !resetBtnIshihara || !progressBarIshihara || !progressNumIshihara) {
-  console.error('یکی از المنت‌های موردنیاز برای تست ایشی‌هारा یافت نشد.');
-  const errorDiv = document.createElement('div');
-  errorDiv.className = 'error-message';
-  errorDiv.innerHTML = 'خطا: نمی‌توان تست ایشی‌هारा را بارگذاری کرد. لطفاً مطمئن شوید که ساختار HTML درست تنظیم شده است.';
-  document.getElementById('tool-ishihara-test').appendChild(errorDiv);
-  setTimeout(() => errorDiv.remove(), 10000);
-  return;
+  document.querySelectorAll("input[name='answer-ishihara']").forEach(input => {
+    input.addEventListener("change", checkAnswerIshihara);
+  });
+
+  // شروع کوییز
+  loadQuestionIshihara();
 }
 
-// شروع کوییز
-loadQuestionIshihara();
+// اجرای تابع هنگام بارگذاری صفحه
+document.addEventListener('DOMContentLoaded', () => {
+  if (document.getElementById('tool-ishihara-test')) {
+    initIshiharaTest();
+  }
+});
