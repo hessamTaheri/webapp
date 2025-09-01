@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
     magnifierCanvas.height = MAGNIFIER_SIZE;
     magnifierCanvas.style.width = `${MAGNIFIER_SIZE}px`;
     magnifierCanvas.style.height = `${MAGNIFIER_SIZE}px`;
-    magnifierCanvas.style.transform = "translate(-50%, -50%) scale(1)";
+    magnifierCanvas.style.position = 'absolute';
 
     // تابع تشخیص دستگاه موبایل
     function isMobileDevice() {
@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return `${AUDIO_BASE_URL}${sanitizedName}.mp3`;
     };
 
-    // لیست رنگ‌ها (چند رنگ جدید اضافه شده)
+    // لیست رنگ‌ها
     const colors = [
       { name: "آبی آسمانی", hex: "#87CEEB", rgb: [135, 206, 235], audio: createAudioPath("آبی-آسمانی") },
       { name: "آبی تیره", hex: "#00008B", rgb: [0, 0, 139], audio: createAudioPath("آبی-تیره") },
@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
       { name: "آبی مایل به بنفش", hex: "#8A2BE2", rgb: [138, 43, 226], audio: createAudioPath("آبی-مایل-به-بنفش") },
       { name: "آبی نفتی", hex: "#191970", rgb: [25, 25, 112], audio: createAudioPath("آبی-نفتی") },
       { name: "آبی نیلی", hex: "#4B0082", rgb: [75, 0, 130], audio: createAudioPath("آبی-نیلی") },
-      { name: "آبی فیروزه‌ای", hex: "#00B7EB", rgb: [0, 183, 235], audio: createAudioPath("آبی-فیروزه-ای") }, // جدید
+      { name: "آبی فیروزه‌ای", hex: "#00B7EB", rgb: [0, 183, 235], audio: createAudioPath("آبی-فیروزه-ای") },
       { name: "اخرایی", hex: "#CC7722", rgb: [204, 119, 34], audio: createAudioPath("اخرایی") },
       { name: "ارغوانی", hex: "#9932CC", rgb: [153, 50, 204], audio: createAudioPath("ارغوانی") },
       { name: "ارغوانی تیره", hex: "#800080", rgb: [128, 0, 128], audio: createAudioPath("ارغوانی-تیره") },
@@ -123,7 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
       { name: "بنفش یاسی", hex: "#C8A2C8", rgb: [200, 162, 200], audio: createAudioPath("بنفش-یاسی") },
       { name: "بیسکوییتی", hex: "#F5DEB3", rgb: [245, 222, 179], audio: createAudioPath("بیسکوییتی") },
       { name: "صورتی", hex: "#FFC0CB", rgb: [255, 192, 203], audio: createAudioPath("صورتی") },
-      { name: "صورتی مرجانی", hex: "#FF4040", rgb: [255, 64, 64], audio: createAudioPath("صورتی-مرجانی") }, // جدید
+      { name: "صورتی مرجانی", hex: "#FF4040", rgb: [255, 64, 64], audio: createAudioPath("صورتی-مرجانی") },
       { name: "خاکستری تیره", hex: "#696969", rgb: [105, 105, 105], audio: createAudioPath("خاکستری-تیره") },
       { name: "خاکستری روشن", hex: "#D3D3D3", rgb: [211, 211, 211], audio: createAudioPath("خاکستری-روشن") },
       { name: "خاکستری", hex: "#808080", rgb: [128, 128, 128], audio: createAudioPath("خاکستری") },
@@ -158,7 +158,6 @@ document.addEventListener('DOMContentLoaded', () => {
       { name: "قرمز روشن", hex: "#FF6666", rgb: [255, 102, 102], audio: createAudioPath("قرمز-روشن") },
       { name: "قرمز شرابی", hex: "#800000", rgb: [128, 0, 0], audio: createAudioPath("قرمز-شرابی") },
       { name: "قرمز گوجه ای", hex: "#FF6347", rgb: [255, 99, 71], audio: createAudioPath("قرمز-گوجه-ای") },
-      { name: "قرمز مرجانی", hex: "#FF7F50", rgb: [255, 127, 80], audio: createAudioPath("قرمز-مرجانی") }, // جدید
       { name: "قهوه ای", hex: "#A52A2A", rgb: [165, 42, 42], audio: createAudioPath("قهوه-ای") },
       { name: "قهوه ای تیره", hex: "#5C4033", rgb: [92, 64, 51], audio: createAudioPath("قهوه-ای-تیره") },
       { name: "کرم", hex: "#FFF8DC", rgb: [255, 248, 220], audio: createAudioPath("کرم") },
@@ -495,7 +494,7 @@ document.addEventListener('DOMContentLoaded', () => {
         rgbCodeEl.textContent = `RGB(${closestColor.rgb[0]}, ${closestColor.rgb[1]}, ${closestColor.rgb[2]})`;
         colorBoxEl.style.backgroundColor = closestColor.hex;
 
-        console.log('رنگ تشخیص داده شد:', closestColor.name, 'RGB:', r, g, b);
+        console.log('رنگ تشخیص داده شده:', closestColor.name, 'RGB:', r, g, b);
       }
 
       requestAnimationFrame(draw);
