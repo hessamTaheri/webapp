@@ -1,4 +1,5 @@
 function initCameraSimulator() {
+  // المنت‌های موردنیاز
   const video = document.getElementById('video-camera');
   const canvas = document.getElementById('canvas-camera');
   const ctx = canvas.getContext('2d');
@@ -9,9 +10,45 @@ function initCameraSimulator() {
   const intensitySlider = document.getElementById('intensity-camera');
   const switchBtn = document.getElementById('switchCamera-camera');
   const startBtn = document.getElementById('startCamera-camera');
+  const permissionModal = document.getElementById('cameraPermissionModal-camera');
+  const allowCameraBtn = document.getElementById('allowCameraBtn-camera');
+  const cameraHint = document.getElementById('camera-hint');
   let currentStream, currentStreamReal;
   let useFrontCamera = false;
   let isCameraStarted = false;
+
+  // بررسی وجود المنت‌ها
+  if (!video || !canvas || !videoReal || !canvasReal || !modeRadios.length || !intensitySlider || !switchBtn || !startBtn || !permissionModal || !allowCameraBtn || !cameraHint) {
+    console.error('یکی از المنت‌های موردنیاز برای شبیه‌ساز دوربین یافت نشد:', {
+      video: !!video,
+      canvas: !!canvas,
+      videoReal: !!videoReal,
+      canvasReal: !!canvasReal,
+      modeRadios: modeRadios.length,
+      intensitySlider: !!intensitySlider,
+      switchBtn: !!switchBtn,
+      startBtn: !!startBtn,
+      permissionModal: !!permissionModal,
+      allowCameraBtn: !!allowCameraBtn,
+      cameraHint: !!cameraHint
+    });
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'error-message';
+    errorDiv.innerHTML = 'خطا: نمی‌توان شبیه‌ساز دوربین را بارگذاری کرد. لطفاً مطمئن شوید که ساختار HTML درست تنظیم شده است.';
+    document.body.appendChild(errorDiv);
+    setTimeout(() => errorDiv.remove(), 10000);
+    return;
+  }
+
+  // غیرفعال کردن کنترل‌ها تا فعال شدن دوربین
+  function toggleControls(enabled) {
+    modeRadios.forEach(radio => (radio.disabled = !enabled));
+    intensitySlider.disabled = !enabled;
+    switchBtn.disabled = !enabled;
+    cameraHint.style.display = enabled ? 'none' : 'block';
+  }
+
+  // درخواست دسترسی به دوربین
   async function getCameraStream() {
     if (currentStream) currentStream.getTracks().forEach(track => track.stop());
     try {
@@ -20,10 +57,18 @@ function initCameraSimulator() {
       };
       currentStream = await navigator.mediaDevices.getUserMedia(constraints);
       video.srcObject = currentStream;
+      return true;
     } catch (err) {
-      alert("دسترسی به دوربین رد شد یا در دسترس نیست.");
+      console.error('خطای دسترسی به دوربین:', err);
+      const errorDiv = document.createElement('div');
+      errorDiv.className = 'error-message';
+      errorDiv.innerHTML = 'دسترسی به دوربین رد شد یا در دسترس نیست. لطفاً اجازه دسترسی را فعال کنید.';
+      document.body.appendChild(errorDiv);
+      setTimeout(() => errorDiv.remove(), 8000);
+      return false;
     }
   }
+
   async function getCameraStreamReal() {
     if (currentStreamReal) currentStreamReal.getTracks().forEach(track => track.stop());
     try {
@@ -32,10 +77,14 @@ function initCameraSimulator() {
       };
       currentStreamReal = await navigator.mediaDevices.getUserMedia(constraints);
       videoReal.srcObject = currentStreamReal;
+      return true;
     } catch (err) {
-      console.log("دسترسی به دوربین واقعی رد شد.");
+      console.error('خطای دسترسی به دوربین واقعی:', err);
+      return false;
     }
   }
+
+  // اعمال فیلتر کوررنگی
   function applyColorFilter(imageData, type, intensity) {
     const data = imageData.data;
     for (let i = 0; i < data.length; i += 4) {
@@ -67,6 +116,8 @@ function initCameraSimulator() {
     }
     return imageData;
   }
+
+  // رندر فریم‌ها
   function draw() {
     if (!isCameraStarted) return;
     if (video.readyState === video.HAVE_ENOUGH_DATA) {
@@ -93,30 +144,79 @@ function initCameraSimulator() {
     }
     requestAnimationFrame(draw);
   }
-  function updateCameras() {
+
+  // به‌روزرسانی جریان دوربین
+  async function updateCameras() {
+    if (!isCameraStarted) return;
+    const success = await getCameraStream();
+    if (!success) {
+      isCameraStarted = false;
+      toggleControls(false);
+      permissionModal.style.display = 'flex';
+      return;
+    }
     if (window.matchMedia("(orientation: landscape)").matches) {
-      getCameraStreamReal();
-      getCameraStream();
+      await getCameraStreamReal();
       canvasReal.style.display = 'block';
     } else {
       if (currentStreamReal) currentStreamReal.getTracks().forEach(track => track.stop());
-      getCameraStream();
       canvasReal.style.display = 'none';
     }
   }
-  switchBtn.addEventListener('click', () => {
-    if (!isCameraStarted) return;
-    useFrontCamera = !useFrontCamera;
-    updateCameras();
+
+  // مدیریت کلیک دکمه اجازه دسترسی
+  allowCameraBtn.addEventListener('click', async () => {
+    permissionModal.style.display = 'none';
+    isCameraStarted = true;
+    toggleControls(true);
+    await updateCameras();
+    requestAnimationFrame(draw);
   });
-  startBtn.addEventListener('click', () => {
+
+  // مدیریت دکمه شروع دوربین
+  startBtn.addEventListener('click', async () => {
     if (!isCameraStarted) {
-      isCameraStarted = true;
-      updateCameras().then(() => requestAnimationFrame(draw));
+      permissionModal.style.display = 'flex';
     }
   });
+
+  // مدیریت تعویض دوربین
+  switchBtn.addEventListener('click', async () => {
+    if (!isCameraStarted) return;
+    useFrontCamera = !useFrontCamera;
+    await updateCameras();
+  });
+
+  // رویدادهای تغییر حالت و شدت
   modeRadios.forEach(radio => radio.addEventListener('change', draw));
   intensitySlider.addEventListener('input', draw);
+
+  // رویداد تغییر جهت صفحه
   window.addEventListener('orientationchange', updateCameras);
-  updateCameras();
+
+  // نمایش مودال هنگام ورود به ابزار
+  function initialize() {
+    toggleControls(false);
+    permissionModal.style.display = 'flex';
+  }
+
+  // اجرای اولیه
+  initialize();
 }
+
+// اجرای تابع با تأخیر برای سازگاری با وردپرس/المنتور
+function runCameraSimulator() {
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    initCameraSimulator();
+  } else {
+    document.addEventListener('DOMContentLoaded', initCameraSimulator);
+    setTimeout(() => {
+      if (!document.getElementById('video-camera')) {
+        console.warn('تلاش مجدد برای اجرای شبیه‌ساز دوربین...');
+        initCameraSimulator();
+      }
+    }, 1000);
+  }
+}
+
+runCameraSimulator();

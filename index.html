@@ -441,7 +441,8 @@
       .back-btn, button { padding: 8px 15px; font-size: 13px; }
       h1, h2 { font-size: 20px; }
       iframe { height: 50vh; }
-      #fullscreen-prompt .prompt-container, #a2hs-prompt .prompt-container { max-width: 80%; }
+      #fullscreen-prompt .prompt-container, #a2hs-prompt .prompt-container { max-wid
+th: 80%; }
       .container,
       .quizContainer {
         margin-right: 10px;
@@ -503,6 +504,15 @@
   <div id="tool-camera-simulator" class="tool-page">
     <button class="back-btn" onclick="closeTool()">برگشت</button>
     <div class="container">
+      <!-- Camera Permission Modal -->
+      <div id="cameraPermissionModal-camera" class="fixed inset-0 bg-gray-900 bg-opacity-70 flex items-center justify-center z-50">
+        <div class="bg-[var(--bg-color)] rounded-lg shadow-xl p-6 max-w-sm w-full text-center">
+          <p class="text-[var(--text-color)] text-lg mb-4">برای استفاده از شبیه‌ساز کوررنگی، باید اجازه دسترسی به دوربین بدهید.</p>
+          <button id="allowCameraBtn-camera" class="bg-[var(--primary-color)] text-white font-semibold py-2 px-4 rounded-lg hover:bg-[var(--primary-hover)] transition-colors">
+            اجازه دسترسی
+          </button>
+        </div>
+      </div>
       <h2>شبیه‌ساز کوررنگی</h2>
       <div class="camera-container">
         <video id="video-camera-real" autoplay playsinline style="display: none;"></video>
@@ -511,17 +521,18 @@
         <canvas id="canvas-camera"></canvas>
       </div>
       <p id="orientation-note">اگر گوشی را به حالت افقی بچرخانید، تصویر واقعی (چپ) و شبیه‌سازی‌شده (راست) کنار هم نمایش داده می‌شوند. در حالت عمودی فقط تصویر شبیه‌سازی‌شده نشان داده می‌شود.</p>
+      <p class="hint-text" id="camera-hint">لطفاً ابتدا دوربین را فعال کنید تا حالت‌های کوررنگی در دسترس قرار گیرند.</p>
       <div id="controls-camera" class="controls">
         <div class="modes">
-          <label><input type="radio" name="mode-camera" value="none" checked><span>عادی</span></label>
-          <label><input type="radio" name="mode-camera" value="protan"><span>کوررنگی قرمز</span></label>
-          <label><input type="radio" name="mode-camera" value="deutan"><span>کوررنگی سبز</span></label>
-          <label><input type="radio" name="mode-camera" value="tritan"><span>کوررنگی آبی</span></label>
-          <label><input type="radio" name="mode-camera" value="achroma"><span>کوررنگی کامل</span></label>
+          <label><input type="radio" name="mode-camera" value="none" checked disabled><span>عادی</span></label>
+          <label><input type="radio" name="mode-camera" value="protan" disabled><span>کوررنگی قرمز</span></label>
+          <label><input type="radio" name="mode-camera" value="deutan" disabled><span>کوررنگی سبز</span></label>
+          <label><input type="radio" name="mode-camera" value="tritan" disabled><span>کوررنگی آبی</span></label>
+          <label><input type="radio" name="mode-camera" value="achroma" disabled><span>کوررنگی کامل</span></label>
         </div>
         <label for="intensity-camera">شدت:</label>
-        <input type="range" id="intensity-camera" min="0" max="1" step="0.01" value="1">
-        <button id="switchCamera-camera" title="تعویض دوربین">
+        <input type="range" id="intensity-camera" min="0" max="1" step="0.01" value="1" disabled>
+        <button id="switchCamera-camera" title="تعویض دوربین" disabled>
           <i class="fas fa-camera-rotate"></i>
         </button>
         <button id="startCamera-camera" title="شروع دوربین">
@@ -615,16 +626,14 @@
   <div id="tool-color-picker" class="tool-page">
     <button class="back-btn" onclick="closeTool()">برگشت</button>
     <div class="container">
-      <!-- Camera Permission Modal -->
-       
-<div id="cameraPermissionModal" class="fixed inset-0 bg-gray-900 bg-opacity-70 flex items-center justify-center z-50">
-  <div class="bg-white rounded-lg shadow-xl p-6 max-w-sm w-full text-center">
-    <p class="text-gray-800 text-lg mb-4">برای استفاده از این ابزار، باید اجازه دسترسی به دوربین بدهید.</p>
-    <button id="allowCameraBtn" class="bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors">
-      اجازه دسترسی
-    </button>
-  </div>
-</div>
+      <div id="cameraPermissionModal" class="fixed inset-0 bg-gray-900 bg-opacity-70 flex items-center justify-center z-50">
+        <div class="bg-[var(--bg-color)] rounded-lg shadow-xl p-6 max-w-sm w-full text-center">
+          <p class="text-[var(--text-color)] text-lg mb-4">برای استفاده از این ابزار، باید اجازه دسترسی به دوربین بدهید.</p>
+          <button id="allowCameraBtn" class="bg-[var(--primary-color)] text-white font-semibold py-2 px-4 rounded-lg hover:bg-[var(--primary-hover)] transition-colors">
+            اجازه دسترسی
+          </button>
+        </div>
+      </div>
       <h2>تشخیص رنگ با دوربین</h2>
       <div id="videoContainer-color" class="video-container">
         <video id="video-color" autoplay playsinline class="absolute inset-0 w-full h-full object-cover"></video>
