@@ -256,30 +256,71 @@
       border-radius: 8px;
       box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
     }
-    #tool-color-picker .video-container {
-      position: relative;
-      width: 100%;
-      overflow: hidden;
-      border-radius: 8px;
-      margin-bottom: 15px;
-      box-shadow: 3px 3px 6px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
-      border: 4px solid var(--accent-color);
-    }
-    #tool-color-picker #canvas-color.fixed {
-      position: absolute;
-      top: 0;
-      left: 0;
-    }
-    #tool-color-picker .magnifier-canvas {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      border: 3px solid white;
-      border-radius: 50%;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-      z-index: 10;
-    }
+ /* استایل‌های مربوط به ابزار تشخیص رنگ */
+#tool-color-picker .video-container {
+  position: relative;
+  width: 100%;
+  max-width: 100vw; /* محدود به عرض صفحه */
+  box-sizing: border-box; /* شامل border و padding */
+  overflow: hidden;
+  border-radius: 12px;
+  border: 4px solid var(--accent-color);
+  box-shadow: 3px 3px 6px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+  margin-bottom: 15px;
+  touch-action: none; /* جلوگیری از زوم/اسکرول ناخواسته */
+}
+
+#tool-color-picker #video-color {
+  width: 100%;
+  max-width: 100vw;
+  height: auto; /* حفظ نسبت تصویر */
+  display: block;
+  position: relative; /* حذف absolute برای هماهنگی با جاوااسکریپت */
+  object-fit: contain; /* جلوگیری از بریده شدن تصویر */
+}
+
+#tool-color-picker #canvas-color {
+  display: none; /* مخفی کردن canvas اصلی */
+}
+
+#tool-color-picker .magnifier-canvas {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 3px solid white;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  z-index: 10;
+}
+
+/* Media Query برای موبایل */
+@media (max-width: 640px) {
+  #tool-color-picker .video-container {
+    max-width: 100vw;
+    margin-right: 0;
+    margin-left: 0;
+  }
+
+  #tool-color-picker #video-color {
+    max-width: 100vw;
+    height: auto;
+  }
+
+  #tool-color-picker .magnifier-canvas {
+    width: 100px !important; /* کوچکتر کردن ذره‌بین در موبایل */
+    height: 100px !important;
+  }
+
+  #tool-color-picker .controls {
+    flex-direction: column; /* دکمه‌ها عمودی در موبایل */
+    gap: 8px;
+  }
+
+  #tool-color-picker input[type="range"] {
+    max-width: 100%; /* اسلایدر روشنایی تمام‌عرض */
+  }
+}
     #tool-picture-simulator .drop-area {
       border: 2px dashed var(--secondary-text);
       padding: 15px;
