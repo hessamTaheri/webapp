@@ -273,22 +273,19 @@ magnifierCanvas.style.transform = "translate(-50%, -50%) scale(1)";
   });
 
   // تابع پیدا کردن نزدیک‌ترین رنگ
-  function findClosestColor(r, g, b) {
-    const inputLab = rgbToLab(r, g, b);
-    let minDistance = Infinity;
-    let closestColor = null;
-    for (const color of colors) {
-      const distance = getColorDistance(inputLab, color.lab);
-      if (distance < minDistance) {
-        minDistance = distance;
-        closestColor = color;
-      }
+function findClosestColor(r, g, b) {
+  const inputLab = rgbToLab(r, g, b);
+  let minDistance = Infinity;
+  let closestColor = null;
+  for (const color of colors) {
+    const distance = getColorDistance(inputLab, color.lab);
+    if (distance < minDistance) {
+      minDistance = distance;
+      closestColor = color;
     }
-    if (minDistance > COLOR_DISTANCE_THRESHOLD) {
-      return { name: "رنگ ناشناخته", hex: "#000000", rgb: [0, 0, 0], audio: null };
-    }
-    return closestColor;
   }
+  return closestColor; // همیشه نزدیک‌ترین رنگ رو برمی‌گردونه
+}
 
   // تابع اعمال روشنایی به داده‌های تصویر
   function applyBrightnessToImageData(imageData, brightness) {
@@ -472,3 +469,4 @@ document.addEventListener('DOMContentLoaded', () => {
     initColorPicker();
   }
 });
+

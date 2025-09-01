@@ -313,7 +313,7 @@
   }
 
   #tool-color-picker .controls {
-    flex-direction: column; /* دکمه‌ها عمودی در موبایل */
+    flex-direction: row; /* دکمه‌ها عمودی در موبایل */
     gap: 8px;
   }
 
@@ -685,10 +685,6 @@ th: 80%; }
         </div>
       </div>
       <div id="controls-color" class="controls">
-        <div class="flex flex-col items-center">
-          <label for="brightnessSlider-color" class="text-sm font-semibold mb-2 text-[var(--text-color)]">روشنایی</label>
-          <input type="range" id="brightnessSlider-color" min="0.5" max="2.0" step="0.1" value="1.0" aria-label="تنظیم روشنایی تصویر">
-        </div>
         <button id="zoomOutBtn-color" title="کوچک‌نمایی">
           <i class="fas fa-search-minus"></i>
         </button>
@@ -704,6 +700,10 @@ th: 80%; }
         <button id="playColorBtn-color" title="پخش نام رنگ">
           <i class="fas fa-volume-up"></i>
         </button>
+                <div class="flex flex-col items-center">
+          <label for="brightnessSlider-color" class="text-sm font-semibold mb-2 text-[var(--text-color)]">روشنایی</label>
+          <input type="range" id="brightnessSlider-color" min="0.5" max="2.0" step="0.1" value="1.0" aria-label="تنظیم روشنایی تصویر">
+        </div>
       </div>
       <div id="colorInfo-color" class="text-center p-4 rounded-lg shadow-inner bg-[var(--bg-color)]">
         <p class="text-lg mb-2">
