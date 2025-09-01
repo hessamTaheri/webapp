@@ -74,7 +74,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const ZOOM_STEP = 0.2;
     const MAGNIFIER_SIZE = 150;
     const BASE_MAGNIFIER_ZOOM = 2;
-    const COLOR_DISTANCE_THRESHOLD = 30;
     const AUDIO_BASE_URL = 'https://www.koorrangi.ir/wp-content/uploads/2025/08/';
 
     // تنظیم اندازه اولیه magnifierCanvas
@@ -102,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return `${AUDIO_BASE_URL}${sanitizedName}.mp3`;
     };
 
-    // لیست رنگ‌ها
+    // لیست رنگ‌ها (چند رنگ جدید اضافه شده)
     const colors = [
       { name: "آبی آسمانی", hex: "#87CEEB", rgb: [135, 206, 235], audio: createAudioPath("آبی-آسمانی") },
       { name: "آبی تیره", hex: "#00008B", rgb: [0, 0, 139], audio: createAudioPath("آبی-تیره") },
@@ -113,6 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
       { name: "آبی مایل به بنفش", hex: "#8A2BE2", rgb: [138, 43, 226], audio: createAudioPath("آبی-مایل-به-بنفش") },
       { name: "آبی نفتی", hex: "#191970", rgb: [25, 25, 112], audio: createAudioPath("آبی-نفتی") },
       { name: "آبی نیلی", hex: "#4B0082", rgb: [75, 0, 130], audio: createAudioPath("آبی-نیلی") },
+      { name: "آبی فیروزه‌ای", hex: "#00B7EB", rgb: [0, 183, 235], audio: createAudioPath("آبی-فیروزه-ای") }, // جدید
       { name: "اخرایی", hex: "#CC7722", rgb: [204, 119, 34], audio: createAudioPath("اخرایی") },
       { name: "ارغوانی", hex: "#9932CC", rgb: [153, 50, 204], audio: createAudioPath("ارغوانی") },
       { name: "ارغوانی تیره", hex: "#800080", rgb: [128, 0, 128], audio: createAudioPath("ارغوانی-تیره") },
@@ -123,6 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
       { name: "بنفش یاسی", hex: "#C8A2C8", rgb: [200, 162, 200], audio: createAudioPath("بنفش-یاسی") },
       { name: "بیسکوییتی", hex: "#F5DEB3", rgb: [245, 222, 179], audio: createAudioPath("بیسکوییتی") },
       { name: "صورتی", hex: "#FFC0CB", rgb: [255, 192, 203], audio: createAudioPath("صورتی") },
+      { name: "صورتی مرجانی", hex: "#FF4040", rgb: [255, 64, 64], audio: createAudioPath("صورتی-مرجانی") }, // جدید
       { name: "خاکستری تیره", hex: "#696969", rgb: [105, 105, 105], audio: createAudioPath("خاکستری-تیره") },
       { name: "خاکستری روشن", hex: "#D3D3D3", rgb: [211, 211, 211], audio: createAudioPath("خاکستری-روشن") },
       { name: "خاکستری", hex: "#808080", rgb: [128, 128, 128], audio: createAudioPath("خاکستری") },
@@ -157,6 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
       { name: "قرمز روشن", hex: "#FF6666", rgb: [255, 102, 102], audio: createAudioPath("قرمز-روشن") },
       { name: "قرمز شرابی", hex: "#800000", rgb: [128, 0, 0], audio: createAudioPath("قرمز-شرابی") },
       { name: "قرمز گوجه ای", hex: "#FF6347", rgb: [255, 99, 71], audio: createAudioPath("قرمز-گوجه-ای") },
+      { name: "قرمز مرجانی", hex: "#FF7F50", rgb: [255, 127, 80], audio: createAudioPath("قرمز-مرجانی") }, // جدید
       { name: "قهوه ای", hex: "#A52A2A", rgb: [165, 42, 42], audio: createAudioPath("قهوه-ای") },
       { name: "قهوه ای تیره", hex: "#5C4033", rgb: [92, 64, 51], audio: createAudioPath("قهوه-ای-تیره") },
       { name: "کرم", hex: "#FFF8DC", rgb: [255, 248, 220], audio: createAudioPath("کرم") },
@@ -180,7 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // تابع پخش صوت رنگ
     async function playColorAudio(audioUrl, colorName) {
-      if (!audioUrl || colorName === 'در انتظار...' || colorName === 'رنگ ناشناخته') {
+      if (!audioUrl || colorName === 'در انتظار...') {
         console.warn('صوت یا نام رنگ معتبر نیست');
         showMessage('لطفاً ابتدا یک رنگ معتبر تشخیص دهید.');
         return;
@@ -231,11 +233,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
           // محاسبه اندازه canvas برای جا شدن در کادر
           if (containerWidth / containerHeight > videoAspectRatio) {
-            // محدود شده توسط ارتفاع
             canvasHeight = containerHeight;
             canvasWidth = canvasHeight * videoAspectRatio;
           } else {
-            // محدود شده توسط عرض
             canvasWidth = containerWidth;
             canvasHeight = canvasWidth / videoAspectRatio;
           }
@@ -274,6 +274,37 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
+    // تابع تبدیل RGB به HSV
+    function rgbToHsv(r, g, b) {
+      r /= 255;
+      g /= 255;
+      b /= 255;
+      const max = Math.max(r, g, b);
+      const min = Math.min(r, g, b);
+      let h, s, v = max;
+      const d = max - min;
+      s = max === 0 ? 0 : d / max;
+      if (max === min) {
+        h = 0; // بدون رنگ
+      } else {
+        switch (max) {
+          case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+          case g: h = (b - r) / d + 2; break;
+          case b: h = (r - g) / d + 4; break;
+        }
+        h /= 6;
+      }
+      return [h * 360, s * 100, v * 100];
+    }
+
+    // تابع محاسبه فاصله در فضای HSV
+    function getHsvDistance(hsv1, hsv2) {
+      const hDiff = Math.min(Math.abs(hsv1[0] - hsv2[0]), 360 - Math.abs(hsv1[0] - hsv2[0]));
+      const sDiff = hsv1[1] - hsv2[1];
+      const vDiff = hsv1[2] - hsv2[2];
+      return Math.sqrt(hDiff * hDiff + sDiff * sDiff + vDiff * vDiff);
+    }
+
     // تابع تبدیل RGB به LAB
     function rgbToLab(r, g, b) {
       r = r / 255;
@@ -294,7 +325,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return [l, a, bb];
     }
 
-    // تابع محاسبه فاصله رنگی
+    // تابع محاسبه فاصله رنگی در فضای LAB
     function getColorDistance(lab1, lab2) {
       return Math.sqrt(
         Math.pow(lab1[0] - lab2[0], 2) +
@@ -303,27 +334,59 @@ document.addEventListener('DOMContentLoaded', () => {
       );
     }
 
-    // محاسبه مقادیر LAB برای رنگ‌ها
+    // محاسبه مقادیر LAB و HSV برای رنگ‌ها
     colors.forEach(color => {
       color.lab = rgbToLab(color.rgb[0], color.rgb[1], color.rgb[2]);
+      color.hsv = rgbToHsv(color.rgb[0], color.rgb[1], color.rgb[2]);
     });
 
-    // تابع پیدا کردن نزدیک‌ترین رنگ
+    // تابع پیدا کردن نزدیک‌ترین رنگ (ترکیب LAB و HSV)
     function findClosestColor(r, g, b) {
-      const inputLab = rgbToLab(r, g, b);
-      let minDistance = Infinity;
-      let closestColor = null;
+      // نرمال‌سازی تاثیر روشنایی
+      const brightnessValue = parseFloat(brightnessSlider.value);
+      const normalizedR = Math.min(255, Math.max(0, r / brightnessValue));
+      const normalizedG = Math.min(255, Math.max(0, g / brightnessValue));
+      const normalizedB = Math.min(255, Math.max(0, b / brightnessValue));
+
+      const inputLab = rgbToLab(normalizedR, normalizedG, normalizedB);
+      const inputHsv = rgbToHsv(normalizedR, normalizedG, normalizedB);
+
+      let minDistanceLab = Infinity;
+      let minDistanceHsv = Infinity;
+      let closestColorLab = null;
+      let closestColorHsv = null;
+
+      // محاسبه فاصله در فضای LAB
       for (const color of colors) {
-        const distance = getColorDistance(inputLab, color.lab);
-        if (distance < minDistance) {
-          minDistance = distance;
-          closestColor = color;
+        const distanceLab = getColorDistance(inputLab, color.lab);
+        if (distanceLab < minDistanceLab) {
+          minDistanceLab = distanceLab;
+          closestColorLab = color;
         }
       }
-      if (minDistance > COLOR_DISTANCE_THRESHOLD) {
-        return { name: "رنگ ناشناخته", hex: "#000000", rgb: [0, 0, 0], audio: null };
+
+      // محاسبه فاصله در فضای HSV
+      for (const color of colors) {
+        const distanceHsv = getHsvDistance(inputHsv, color.hsv);
+        if (distanceHsv < minDistanceHsv) {
+          minDistanceHsv = distanceHsv;
+          closestColorHsv = color;
+        }
       }
-      return closestColor;
+
+      // انتخاب بهترین رنگ (ترکیب LAB و HSV)
+      const finalColor = minDistanceLab <= minDistanceHsv ? closestColorLab : closestColorHsv;
+
+      // دیباگ
+      console.log('رنگ ورودی (RGB):', [r, g, b]);
+      console.log('رنگ نرمال‌شده (RGB):', [normalizedR, normalizedG, normalizedB]);
+      console.log('رنگ ورودی (LAB):', inputLab);
+      console.log('رنگ ورودی (HSV):', inputHsv);
+      console.log('نزدیک‌ترین رنگ (LAB):', closestColorLab.name, 'فاصله:', minDistanceLab);
+      console.log('نزدیک‌ترین رنگ (HSV):', closestColorHsv.name, 'فاصله:', minDistanceHsv);
+      console.log('رنگ نهایی:', finalColor.name);
+
+      return finalColor;
     }
 
     // تابع اعمال روشنایی به داده‌های تصویر
@@ -464,7 +527,7 @@ document.addEventListener('DOMContentLoaded', () => {
     playColorBtn.addEventListener('click', () => {
       const currentColorName = colorNameEl.textContent;
       const color = colors.find(c => c.name === currentColorName);
-      if (color && currentColorName !== 'در انتظار...' && currentColorName !== 'رنگ ناشناخته') {
+      if (color && currentColorName !== 'در انتظار...') {
         playColorAudio(color.audio, currentColorName);
       } else {
         showMessage('لطفاً ابتدا یک رنگ معتبر تشخیص دهید تا نام آن پخش شود.');
