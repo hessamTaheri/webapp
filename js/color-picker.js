@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
         !zoomOutBtn || !brightnessSlider || !colorNameEl || !hexCodeEl ||
         !rgbCodeEl || !colorBoxEl || !messageModal || !modalMessage || !closeModalBtn ||
         !cameraPermissionModal || !allowCameraBtn) {
-      console.error('یکی از المنت‌های موردنیاز برای تشخیص رنگ یافت نشد:', {
+      console.error('یکی از المنت‌های موردنیاز یافت نشد:', {
         video: !!video,
         canvas: !!canvas,
         magnifierCanvas: !!magnifierCanvas,
@@ -56,11 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
         cameraPermissionModal: !!cameraPermissionModal,
         allowCameraBtn: !!allowCameraBtn
       });
-      const errorDiv = document.createElement('div');
-      errorDiv.className = 'error-message';
-      errorDiv.innerHTML = 'خطا: نمی‌توان ابزار تشخیص رنگ را بارگذاری کرد. لطفاً مطمئن شوید که ساختار HTML درست تنظیم شده است.';
-      document.getElementById('tool-color-picker').appendChild(errorDiv);
-      setTimeout(() => errorDiv.remove(), 10000);
+      showMessage('خطا: نمی‌توان ابزار تشخیص رنگ را بارگذاری کرد.');
       return;
     }
 
@@ -73,8 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const MIN_ZOOM = 1.0;
     const ZOOM_STEP = 0.2;
     const MAGNIFIER_SIZE = 150;
-    const BASE_MAGNIFIER_ZOOM = 2;
-    const AUDIO_BASE_URL = 'https://www.koorrangi.ir/wp-content/uploads/2025/08/';
+    const MAGNIFIER_ZOOM = 2;
 
     // تنظیم اندازه اولیه magnifierCanvas
     magnifierCanvas.width = MAGNIFIER_SIZE;
@@ -82,23 +77,21 @@ document.addEventListener('DOMContentLoaded', () => {
     magnifierCanvas.style.width = `${MAGNIFIER_SIZE}px`;
     magnifierCanvas.style.height = `${MAGNIFIER_SIZE}px`;
     magnifierCanvas.style.position = 'absolute';
-
-    // تابع تشخیص دستگاه موبایل
-    function isMobileDevice() {
-      return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    }
+    magnifierCanvas.style.left = '50%';
+    magnifierCanvas.style.top = '50%';
+    magnifierCanvas.style.transform = 'translate(-50%, -50%)';
 
     // تابع نمایش پیام خطا
     function showMessage(message) {
       modalMessage.textContent = message;
       messageModal.classList.remove('hidden');
-      console.log('پیام نمایش داده شد:', message);
+      console.log('پیام:', message);
     }
 
     // تابع ساخت مسیر فایل صوتی
     const createAudioPath = (persianName) => {
       const sanitizedName = persianName.replace(/ /g, '-');
-      return `${AUDIO_BASE_URL}${sanitizedName}.mp3`;
+      return `https://www.koorrangi.ir/wp-content/uploads/2025/08/${sanitizedName}.mp3`;
     };
 
     // لیست رنگ‌ها
@@ -156,7 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
       { name: "قرمز", hex: "#FF0000", rgb: [255, 0, 0], audio: createAudioPath("قرمز") },
       { name: "قرمز آلبالویی", hex: "#8B0000", rgb: [139, 0, 0], audio: createAudioPath("قرمز-آلبالویی") },
       { name: "قرمز روشن", hex: "#FF6666", rgb: [255, 102, 102], audio: createAudioPath("قرمز-روشن") },
-      { name: "قرمز شرابی", hex: "#800000", rgb: [128, 0, 0], audio: createAudioPath("قرمز-شرابی") },
+      { name: "قرمز شرابی", hex: "#800000", rgb: [128, 0, 0], audio: createAudioPath("قرمز-Eastابی") },
       { name: "قرمز گوجه ای", hex: "#FF6347", rgb: [255, 99, 71], audio: createAudioPath("قرمز-گوجه-ای") },
       { name: "قهوه ای", hex: "#A52A2A", rgb: [165, 42, 42], audio: createAudioPath("قهوه-ای") },
       { name: "قهوه ای تیره", hex: "#5C4033", rgb: [92, 64, 51], audio: createAudioPath("قهوه-ای-تیره") },
@@ -182,13 +175,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // تابع پخش صوت رنگ
     async function playColorAudio(audioUrl, colorName) {
       if (!audioUrl || colorName === 'در انتظار...') {
-        console.warn('صوت یا نام رنگ معتبر نیست');
         showMessage('لطفاً ابتدا یک رنگ معتبر تشخیص دهید.');
         return;
       }
       const audioExists = await checkAudioExists(audioUrl);
       if (!audioExists) {
-        console.warn('فایل صوتی یافت نشد:', audioUrl);
         showMessage(`فایل صوتی برای رنگ "${colorName}" یافت نشد.`);
         return;
       }
@@ -198,78 +189,35 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       currentAudio = new Audio(audioUrl);
       currentAudio.play().catch(e => {
-        console.error('خطا در پخش صوت:', e, 'URL:', audioUrl);
-        showMessage(`خطا در پخش صدا برای "${colorName}": ${e.message}`);
+        showMessage(`خطا در پخش صدا برای "${colorName}".`);
       });
-      currentAudio.onended = () => console.log('صوت تمام شد:', colorName);
     }
 
     // تابع دسترسی به دوربین
     async function getCameraStream() {
       if (currentStream) {
         currentStream.getTracks().forEach(track => track.stop());
-        currentStream = null;
       }
       try {
         const constraints = {
           video: {
             facingMode: useFrontCamera ? 'user' : 'environment',
-            width: isMobileDevice() ? { max: 640 } : { ideal: 1280 },
-            height: isMobileDevice() ? { max: 480 } : { ideal: 720 }
+            width: { ideal: 1280 },
+            height: { ideal: 720 }
           }
         };
-        console.log('درخواست دوربین با تنظیمات:', constraints);
         currentStream = await navigator.mediaDevices.getUserMedia(constraints);
         video.srcObject = currentStream;
-        video.onloadedmetadata = () => {
-          console.log('متادیتای ویدیو لود شد:', video.videoWidth, video.videoHeight);
-          
-          // تنظیم اندازه canvas بر اساس videoContainer
-          const containerWidth = videoContainer.clientWidth;
-          const containerHeight = videoContainer.clientHeight;
-          const videoAspectRatio = video.videoWidth / video.videoHeight;
-          let canvasWidth, canvasHeight;
-
-          // محاسبه اندازه canvas برای جا شدن در کادر
-          if (containerWidth / containerHeight > videoAspectRatio) {
-            canvasHeight = containerHeight;
-            canvasWidth = canvasHeight * videoAspectRatio;
-          } else {
-            canvasWidth = containerWidth;
-            canvasHeight = canvasWidth / videoAspectRatio;
-          }
-
-          canvas.width = canvasWidth;
-          canvas.height = canvasHeight;
-          video.style.width = `${canvasWidth}px`;
-          video.style.height = `${canvasHeight}px`;
-          console.log(`اندازه canvas تنظیم شد: ${canvasWidth}x${canvasHeight}`);
-          console.log(`اندازه videoContainer: ${containerWidth}x${containerHeight}`);
-
-          video.style.filter = `brightness(${brightnessSlider.value}) contrast(1)`;
-          console.log('روشنایی اولیه تنظیم شد:', brightnessSlider.value);
-          requestAnimationFrame(draw);
-        };
-        video.onerror = (err) => {
-          console.error('خطای المنت ویدیویی:', err);
-          showMessage('خطا در بارگذاری ویدیو: ' + err.message);
-        };
       } catch (err) {
         console.error('خطای دسترسی به دوربین:', err);
         let errorMessage = 'دسترسی به دوربین رد شد یا در دسترس نیست.';
         if (err.name === 'NotAllowedError') {
           errorMessage = 'لطفاً اجازه دسترسی به دوربین را بدهید.';
         } else if (err.name === 'NotFoundError') {
-          errorMessage = 'دوربین در دسترس نیست. لطفاً بررسی کنید که دوربین متصل است.';
-        } else if (err.name === 'NotReadableError') {
-          errorMessage = 'دوربین در حال استفاده توسط برنامه دیگری است.';
+          errorMessage = 'دوربین یافت نشد.';
         }
         showMessage(errorMessage);
-        if (!useFrontCamera) {
-          console.log('فال‌بک به دوربین جلو');
-          useFrontCamera = true;
-          getCameraStream();
-        }
+        throw err;
       }
     }
 
@@ -284,7 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const d = max - min;
       s = max === 0 ? 0 : d / max;
       if (max === min) {
-        h = 0; // بدون رنگ
+        h = 0;
       } else {
         switch (max) {
           case r: h = (g - b) / d + (g < b ? 6 : 0); break;
@@ -304,106 +252,34 @@ document.addEventListener('DOMContentLoaded', () => {
       return Math.sqrt(hDiff * hDiff + sDiff * sDiff + vDiff * vDiff);
     }
 
-    // تابع تبدیل RGB به LAB
-    function rgbToLab(r, g, b) {
-      r = r / 255;
-      g = g / 255;
-      b = b / 255;
-      r = r > 0.04045 ? Math.pow((r + 0.055) / 1.055, 2.4) : r / 12.92;
-      g = g > 0.04045 ? Math.pow((g + 0.055) / 1.055, 2.4) : g / 12.92;
-      b = b > 0.04045 ? Math.pow((b + 0.055) / 1.055, 2.4) : b / 12.92;
-      let x = r * 0.4124 + g * 0.3576 + b * 0.1805;
-      let y = r * 0.2126 + g * 0.7152 + b * 0.0722;
-      let z = r * 0.0193 + g * 0.1192 + b * 0.9505;
-      x = x > 0.008856 ? Math.pow(x, 1/3) : (7.787 * x) + (16 / 116);
-      y = y > 0.008856 ? Math.pow(y, 1/3) : (7.787 * y) + (16 / 116);
-      z = z > 0.008856 ? Math.pow(z, 1/3) : (7.787 * z) + (16 / 116);
-      const l = (116 * y) - 16;
-      const a = 500 * (x - y);
-      const bb = 200 * (y - z);
-      return [l, a, bb];
-    }
-
-    // تابع محاسبه فاصله رنگی در فضای LAB
-    function getColorDistance(lab1, lab2) {
-      return Math.sqrt(
-        Math.pow(lab1[0] - lab2[0], 2) +
-        Math.pow(lab1[1] - lab2[1], 2) +
-        Math.pow(lab1[2] - lab2[2], 2)
-      );
-    }
-
-    // محاسبه مقادیر LAB و HSV برای رنگ‌ها
+    // محاسبه مقادیر HSV برای رنگ‌ها
     colors.forEach(color => {
-      color.lab = rgbToLab(color.rgb[0], color.rgb[1], color.rgb[2]);
       color.hsv = rgbToHsv(color.rgb[0], color.rgb[1], color.rgb[2]);
     });
 
-    // تابع پیدا کردن نزدیک‌ترین رنگ (ترکیب LAB و HSV)
+    // تابع پیدا کردن نزدیک‌ترین رنگ (فقط HSV)
     function findClosestColor(r, g, b) {
-      // نرمال‌سازی تاثیر روشنایی
       const brightnessValue = parseFloat(brightnessSlider.value);
       const normalizedR = Math.min(255, Math.max(0, r / brightnessValue));
       const normalizedG = Math.min(255, Math.max(0, g / brightnessValue));
       const normalizedB = Math.min(255, Math.max(0, b / brightnessValue));
-
-      const inputLab = rgbToLab(normalizedR, normalizedG, normalizedB);
       const inputHsv = rgbToHsv(normalizedR, normalizedG, normalizedB);
-
-      let minDistanceLab = Infinity;
-      let minDistanceHsv = Infinity;
-      let closestColorLab = null;
-      let closestColorHsv = null;
-
-      // محاسبه فاصله در فضای LAB
+      let minDistance = Infinity;
+      let closestColor = null;
       for (const color of colors) {
-        const distanceLab = getColorDistance(inputLab, color.lab);
-        if (distanceLab < minDistanceLab) {
-          minDistanceLab = distanceLab;
-          closestColorLab = color;
+        const distance = getHsvDistance(inputHsv, color.hsv);
+        if (distance < minDistance) {
+          minDistance = distance;
+          closestColor = color;
         }
       }
-
-      // محاسبه فاصله در فضای HSV
-      for (const color of colors) {
-        const distanceHsv = getHsvDistance(inputHsv, color.hsv);
-        if (distanceHsv < minDistanceHsv) {
-          minDistanceHsv = distanceHsv;
-          closestColorHsv = color;
-        }
-      }
-
-      // انتخاب بهترین رنگ (ترکیب LAB و HSV)
-      const finalColor = minDistanceLab <= minDistanceHsv ? closestColorLab : closestColorHsv;
-
-      // دیباگ
-      console.log('رنگ ورودی (RGB):', [r, g, b]);
-      console.log('رنگ نرمال‌شده (RGB):', [normalizedR, normalizedG, normalizedB]);
-      console.log('رنگ ورودی (LAB):', inputLab);
-      console.log('رنگ ورودی (HSV):', inputHsv);
-      console.log('نزدیک‌ترین رنگ (LAB):', closestColorLab.name, 'فاصله:', minDistanceLab);
-      console.log('نزدیک‌ترین رنگ (HSV):', closestColorHsv.name, 'فاصله:', minDistanceHsv);
-      console.log('رنگ نهایی:', finalColor.name);
-
-      return finalColor;
-    }
-
-    // تابع اعمال روشنایی به داده‌های تصویر
-    function applyBrightnessToImageData(imageData, brightness) {
-      const data = imageData.data;
-      for (let i = 0; i < data.length; i += 4) {
-        data[i] = Math.min(255, data[i] * brightness); // R
-        data[i + 1] = Math.min(255, data[i + 1] * brightness); // G
-        data[i + 2] = Math.min(255, data[i + 2] * brightness); // B
-        // Alpha بدون تغییر
-      }
-      return imageData;
+      return closestColor;
     }
 
     // تابع رندر فریم‌ها
     function draw() {
       if (!isPaused && video.readyState === video.HAVE_ENOUGH_DATA) {
-        // تنظیم اندازه canvas بر اساس videoContainer
+        // تنظیم اندازه canvas
         const containerWidth = videoContainer.clientWidth;
         const containerHeight = videoContainer.clientHeight;
         const videoAspectRatio = video.videoWidth / video.videoHeight;
@@ -419,48 +295,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
         canvas.width = canvasWidth;
         canvas.height = canvasHeight;
+        canvas.style.width = `${canvasWidth}px`;
+        canvas.style.height = `${canvasHeight}px`;
         video.style.width = `${canvasWidth}px`;
         video.style.height = `${canvasHeight}px`;
 
-        // کشیدن تصویر روی canvas اصلی
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        // کشیدن تصویر روی canvas
+        ctx.drawImage(video, 0, 0, canvasWidth, canvasHeight);
 
-        const centerX = Math.floor(canvas.width / 2);
-        const centerY = Math.floor(canvas.height / 2);
+        // محاسبه مختصات مرکز
+        const centerX = canvasWidth / 2;
+        const centerY = canvasHeight / 2;
 
-        // محاسبه اندازه ناحیه ذره‌بین
-        const magnifierZoom = BASE_MAGNIFIER_ZOOM * zoomLevel;
-        const magnifierSize = MAGNIFIER_SIZE / magnifierZoom;
+        // محاسبه ناحیه بزرگ‌نمایی
+        const magnifierSize = MAGNIFIER_SIZE / MAGNIFIER_ZOOM;
+        const sourceX = (video.videoWidth / canvasWidth) * centerX - magnifierSize / 2;
+        const sourceY = (video.videoHeight / canvasHeight) * centerY - magnifierSize / 2;
 
-        // ایجاد canvas موقت برای اعمال روشنایی
-        const tempCanvas = document.createElement('canvas');
-        tempCanvas.width = magnifierSize;
-        tempCanvas.height = magnifierSize;
-        const tempCtx = tempCanvas.getContext('2d');
-        tempCtx.drawImage(
-          video,
-          centerX - magnifierSize / 2,
-          centerY - magnifierSize / 2,
-          magnifierSize,
-          magnifierSize,
-          0,
-          0,
-          magnifierSize,
-          magnifierSize
-        );
-
-        // اعمال روشنایی روی ناحیه ذره‌بین
-        const brightnessValue = parseFloat(brightnessSlider.value);
-        const magnifierImageData = tempCtx.getImageData(0, 0, magnifierSize, magnifierSize);
-        const adjustedImageData = applyBrightnessToImageData(magnifierImageData, brightnessValue);
-        tempCtx.putImageData(adjustedImageData, 0, 0);
-
-        // کشیدن تصویر زوم‌شده روی magnifierCanvas
+        // کشیدن ناحیه بزرگ‌نمایی
         magnifierCtx.clearRect(0, 0, MAGNIFIER_SIZE, MAGNIFIER_SIZE);
         magnifierCtx.drawImage(
-          tempCanvas,
-          0,
-          0,
+          video,
+          sourceX,
+          sourceY,
           magnifierSize,
           magnifierSize,
           0,
@@ -469,58 +326,48 @@ document.addEventListener('DOMContentLoaded', () => {
           MAGNIFIER_SIZE
         );
 
-        // اضافه کردن crosshair روی ذره‌بین
+        // رسم دایره مرکزی
         magnifierCtx.beginPath();
         magnifierCtx.arc(MAGNIFIER_SIZE / 2, MAGNIFIER_SIZE / 2, 5, 0, 2 * Math.PI);
         magnifierCtx.strokeStyle = 'white';
         magnifierCtx.lineWidth = 2;
         magnifierCtx.stroke();
 
-        // برداشت رنگ با روشنایی اعمال‌شده
-        const colorTempCanvas = document.createElement('canvas');
-        colorTempCanvas.width = canvas.width;
-        colorTempCanvas.height = canvas.height;
-        const colorTempCtx = colorTempCanvas.getContext('2d');
-        colorTempCtx.drawImage(video, 0, 0, canvas.width, canvas.height);
-        const colorImageData = colorTempCtx.getImageData(0, 0, canvas.width, canvas.height);
-        const adjustedColorImageData = applyBrightnessToImageData(colorImageData, brightnessValue);
-        colorTempCtx.putImageData(adjustedColorImageData, 0, 0);
-        const pixel = colorTempCtx.getImageData(centerX, centerY, 1, 1).data;
+        // برداشت رنگ از مرکز
+        const pixel = ctx.getImageData(centerX, centerY, 1, 1).data;
         const [r, g, b] = pixel;
-
         const closestColor = findClosestColor(r, g, b);
         colorNameEl.textContent = closestColor.name;
         hexCodeEl.textContent = closestColor.hex;
         rgbCodeEl.textContent = `RGB(${closestColor.rgb[0]}, ${closestColor.rgb[1]}, ${closestColor.rgb[2]})`;
         colorBoxEl.style.backgroundColor = closestColor.hex;
 
-        console.log('رنگ تشخیص داده شده:', closestColor.name, 'RGB:', r, g, b);
+        // دیباگ
+        console.log('مختصات مرکز:', { centerX, centerY });
+        console.log('مختصات منبع ذره‌بین:', { sourceX, sourceY });
+        console.log('رنگ تشخیص داده شده:', closestColor.name, 'RGB:', [r, g, b]);
       }
-
       requestAnimationFrame(draw);
     }
 
+    // تنظیم روشنایی
+    function updateBrightness() {
+      const brightnessValue = parseFloat(brightnessSlider.value);
+      video.style.filter = `brightness(${brightnessValue}) contrast(1)`;
+    }
+
     // Event Listenerها
-    switchCameraBtn.addEventListener('click', () => {
+    switchCameraBtn.addEventListener('click', async () => {
       useFrontCamera = !useFrontCamera;
-      console.log('تعویض دوربین, useFrontCamera:', useFrontCamera);
-      getCameraStream();
+      await getCameraStream();
     });
 
     pauseResumeBtn.addEventListener('click', () => {
       isPaused = !isPaused;
-      if (isPaused) {
-        pauseResumeIcon.classList.remove('fa-pause');
-        pauseResumeIcon.classList.add('fa-play');
-        video.pause();
-      } else {
-        pauseResumeIcon.classList.remove('fa-play');
-        pauseResumeIcon.classList.add('fa-pause');
-        video.play().catch(err => {
-          console.error('خطا در پخش ویدیو:', err);
-          showMessage('خطا در پخش ویدیو: ' + err.message);
-        });
-      }
+      pauseResumeIcon.classList.toggle('fa-pause', !isPaused);
+      pauseResumeIcon.classList.toggle('fa-play', isPaused);
+      if (isPaused) video.pause();
+      else video.play().catch(() => showMessage('خطا در پخش ویدیو.'));
     });
 
     playColorBtn.addEventListener('click', () => {
@@ -529,7 +376,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (color && currentColorName !== 'در انتظار...') {
         playColorAudio(color.audio, currentColorName);
       } else {
-        showMessage('لطفاً ابتدا یک رنگ معتبر تشخیص دهید تا نام آن پخش شود.');
+        showMessage('لطفاً ابتدا یک رنگ معتبر تشخیص دهید.');
       }
     });
 
@@ -537,7 +384,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if (zoomLevel < MAX_ZOOM) {
         zoomLevel += ZOOM_STEP;
         magnifierCanvas.style.transform = `translate(-50%, -50%) scale(${zoomLevel})`;
-        console.log('بزرگ‌نمایی:', zoomLevel);
       }
     });
 
@@ -545,29 +391,31 @@ document.addEventListener('DOMContentLoaded', () => {
       if (zoomLevel > MIN_ZOOM) {
         zoomLevel -= ZOOM_STEP;
         magnifierCanvas.style.transform = `translate(-50%, -50%) scale(${zoomLevel})`;
-        console.log('کوچک‌نمایی:', zoomLevel);
       }
     });
 
-    brightnessSlider.addEventListener('input', () => {
-      const brightnessValue = brightnessSlider.value;
-      video.style.filter = `brightness(${brightnessValue}) contrast(1)`;
-      console.log('روشنایی تنظیم شد:', brightnessValue);
-    });
+    brightnessSlider.addEventListener('input', updateBrightness);
 
     closeModalBtn.addEventListener('click', () => {
       messageModal.classList.add('hidden');
-      console.log('مودال بسته شد');
     });
 
-    allowCameraBtn.addEventListener('click', () => {
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        showMessage('مرورگر شما از دسترسی به دوربین پشتیبانی نمی‌کند.');
-        console.error('getUserMedia پشتیبانی نمی‌شود');
-        return;
-      }
-      getCameraStream();
+    allowCameraBtn.addEventListener('click', async () => {
       cameraPermissionModal.classList.add('hidden');
+      try {
+        await getCameraStream();
+        video.onloadedmetadata = () => {
+          video.play();
+          updateBrightness();
+          requestAnimationFrame(draw);
+        };
+      } catch {
+        cameraPermissionModal.classList.remove('hidden');
+      }
     });
+
+    // شروع اولیه
+    colorNameEl.textContent = 'در انتظار...';
+    cameraPermissionModal.classList.remove('hidden');
   }
 });
